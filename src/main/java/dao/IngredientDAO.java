@@ -21,7 +21,9 @@ public class IngredientDAO {
         String sql = "INSERT INTO ingredients(nama_bahan,stok,satuan,batas_minimum,status,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP)";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             fill(ps, i, false);
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) new MenuDAO().refreshAllMenuStocks();
+            return ok;
         } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
@@ -29,14 +31,18 @@ public class IngredientDAO {
         String sql = "UPDATE ingredients SET nama_bahan=?, stok=?, satuan=?, batas_minimum=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id_bahan=?";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             fill(ps, i, true);
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) new MenuDAO().refreshAllMenuStocks();
+            return ok;
         } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
     public boolean delete(int id) {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement("DELETE FROM ingredients WHERE id_bahan=?")) {
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) new MenuDAO().refreshAllMenuStocks();
+            return ok;
         } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
