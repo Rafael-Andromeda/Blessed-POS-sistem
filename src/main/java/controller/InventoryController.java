@@ -67,7 +67,8 @@ public class InventoryController {
 
     @FXML private void delete() {
         if (selected == null) return;
-        dao.delete(selected.getIdBahan());
+        boolean ok = dao.delete(selected.getIdBahan());
+        if (!ok) { show("Bahan baku tidak bisa dihapus karena masih digunakan pada komposisi menu. Hapus/ubah komposisi menu terlebih dahulu."); return; }
         clear(); load();
     }
 

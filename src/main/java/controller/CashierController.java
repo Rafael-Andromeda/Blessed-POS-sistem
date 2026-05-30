@@ -8,6 +8,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import model.CartItem;
@@ -38,6 +40,10 @@ public class CashierController {
     @FXML private Label subtotalLabel;
     @FXML private Label discountLabel;
     @FXML private Label grandTotalLabel;
+    @FXML private VBox qrisBox;
+    @FXML private ImageView qrisImage;
+    @FXML private Button processButton;
+    @FXML private Button confirmQrisButton;
 
     private final MenuDAO menuDAO = new MenuDAO();
     private final PromoDAO promoDAO = new PromoDAO();
@@ -78,8 +84,28 @@ public class CashierController {
         searchField.textProperty().addListener((obs, o, n) -> loadMenus());
         categoryCombo.setOnAction(e -> loadMenus());
         promoCombo.setOnAction(e -> updateTotals());
+        paymentCombo.setOnAction(e -> updatePaymentMode());
+        loadQrisImage();
+        updatePaymentMode();
         loadMenus();
         updateTotals();
+    }
+
+    private void loadQrisImage() {
+        try {
+            qrisImage.setImage(new Image(getClass().getResourceAsStream("/assets/qris/qris.png")));
+        } catch (Exception e) {
+            qrisImage.setImage(null);
+        }
+    }
+
+    private void updatePaymentMode() {
+        boolean qris = "QRIS".equals(paymentCombo.getValue());
+        qrisBox.setVisible(qris);
+        qrisBox.setManaged(qris);
+        confirmQrisButton.setVisible(qris);
+        confirmQrisButton.setManaged(qris);
+        processButton.setText(qris ? "Tampilkan QRIS" : "Proses Pembayaran & Cetak Nota");
     }
 
     private void loadMenus() {
@@ -92,11 +118,12 @@ public class CashierController {
             Label name = new Label(item.getNamaMenu());
             name.getStyleClass().add("card-title");
             Label category = new Label(item.getKategori() + " • Stok " + item.getStok());
-            category.getStyleClass().add("muted-text");
+            category.getStyleClass().add(item.getStok() <= 0 ? "error-text" : "muted-text");
             Label price = new Label(item.getHargaFormatted());
             price.getStyleClass().add("price-text");
-            Button add = new Button("+");
-            add.getStyleClass().add("round-button");
+            Button add = new Button(item.getStok() <= 0 ? "Habis" : "+");
+            add.getStyleClass().add(item.getStok() <= 0 ? "danger-button" : "round-button");
+            add.setDisable(item.getStok() <= 0);
             add.setOnAction(e -> addToCart(item));
             card.getChildren().addAll(name, category, price, add);
             menuGrid.add(card, col, row);
@@ -108,12 +135,14 @@ public class CashierController {
     private void addToCart(MenuItem item) {
         for (CartItem c : cartItems) {
             if (c.getIdMenu() == item.getIdMenu()) {
+                if (c.getQty() + 1 > item.getStok()) { showAlert("Stok menu " + item.getNamaMenu() + " tidak mencukupi."); return; }
                 c.setQty(c.getQty() + 1);
                 cartTable.refresh();
                 updateTotals();
                 return;
             }
         }
+        if (item.getStok() <= 0) { showAlert("Stok menu " + item.getNamaMenu() + " habis."); return; }
         cartItems.add(new CartItem(item, 1));
         updateTotals();
     }
@@ -137,7 +166,9 @@ public class CashierController {
         dialog.showAndWait().ifPresent(value -> {
             try {
                 int qty = Integer.parseInt(value);
-                if (qty <= 0) cartItems.remove(item); else item.setQty(qty);
+                if (qty <= 0) cartItems.remove(item);
+                else if (qty > item.getMenuItem().getStok()) showAlert("Qty melebihi stok menu. Stok tersedia: " + item.getMenuItem().getStok());
+                else item.setQty(qty);
                 cartTable.refresh();
                 updateTotals();
             } catch (NumberFormatException ex) { showAlert("Qty harus angka."); }
@@ -169,6 +200,22 @@ public class CashierController {
     }
 
     @FXML private void processPayment() {
+        if ("QRIS".equals(paymentCombo.getValue())) {
+            if (cartItems.isEmpty()) { showAlert("Keranjang masih kosong."); return; }
+            qrisBox.setVisible(true);
+            qrisBox.setManaged(true);
+            showInfo("Silakan pembeli scan barcode QRIS, lalu tekan tombol Konfirmasi Pembayaran. Nota belum dicetak sebelum konfirmasi.");
+            return;
+        }
+        completePayment();
+    }
+
+    @FXML private void confirmQrisPayment() {
+        if (!"QRIS".equals(paymentCombo.getValue())) { showAlert("Metode pembayaran saat ini bukan QRIS."); return; }
+        completePayment();
+    }
+
+    private void completePayment() {
         if (cartItems.isEmpty()) { showAlert("Keranjang masih kosong."); return; }
         if (!SessionManager.isLoggedIn()) { showAlert("Session login tidak ditemukan."); return; }
         int subtotal = subtotal();
@@ -189,6 +236,7 @@ public class CashierController {
             showInfo("Transaksi berhasil. Nota tersimpan di: " + receipt.toAbsolutePath());
             cartItems.clear();
             updateTotals();
+            loadMenus();
         } catch (SQLException ex) {
             ex.printStackTrace();
             showAlert("Gagal menyimpan transaksi: " + ex.getMessage());

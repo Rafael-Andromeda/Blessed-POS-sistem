@@ -12,11 +12,13 @@ import model.TransactionDetail;
 import utils.CSVExporter;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryController {
     @FXML private TextField searchField;
     @FXML private ComboBox<String> monthCombo;
+    @FXML private ComboBox<String> yearCombo;
     @FXML private TableView<Transaction> table;
     @FXML private TableColumn<Transaction, String> codeColumn;
     @FXML private TableColumn<Transaction, String> dateColumn;
@@ -36,13 +38,26 @@ public class HistoryController {
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("tipeOrder"));
         monthCombo.getItems().setAll("Semua","01","02","03","04","05","06","07","08","09","10","11","12");
         monthCombo.setValue("Semua");
+        List<String> years = new ArrayList<>();
+        years.add("Semua");
+        years.addAll(dao.findAvailableYears());
+        yearCombo.setItems(FXCollections.observableArrayList(years));
+        yearCombo.setValue("Semua");
         searchField.textProperty().addListener((o,a,b)->load());
         monthCombo.setOnAction(e->load());
+        yearCombo.setOnAction(e->load());
         table.setRowFactory(tv -> { TableRow<Transaction> r = new TableRow<>(); r.setOnMouseClicked(e -> { if (e.getClickCount()==2 && !r.isEmpty()) showDetail(r.getItem()); }); return r; });
         load();
     }
 
-    private void load() { table.setItems(FXCollections.observableArrayList(dao.findAll(searchField.getText(), monthCombo.getValue()))); }
+    private void load() { table.setItems(FXCollections.observableArrayList(dao.findAll(searchField.getText(), monthCombo.getValue(), yearCombo.getValue()))); }
+
+    @FXML private void resetFilter() {
+        searchField.clear();
+        monthCombo.setValue("Semua");
+        yearCombo.setValue("Semua");
+        load();
+    }
 
     @FXML private void showSelectedDetail() {
         Transaction t = table.getSelectionModel().getSelectedItem();
