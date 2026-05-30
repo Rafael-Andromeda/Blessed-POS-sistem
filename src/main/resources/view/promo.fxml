@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PromoController" styleClass="page">
+    <top><Label text="Promo" styleClass="page-title"/></top>
+    <center>
+        <TableView fx:id="table">
+            <columns>
+                <TableColumn fx:id="nameColumn" text="Nama Promo" prefWidth="200"/>
+                <TableColumn fx:id="typeColumn" text="Jenis" prefWidth="100"/>
+                <TableColumn fx:id="valueColumn" text="Nilai" prefWidth="90"/>
+                <TableColumn fx:id="minColumn" text="Minimal" prefWidth="110"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </center>
+    <right>
+        <VBox spacing="12" prefWidth="330" styleClass="panel">
+            <Label fx:id="formTitleLabel" text="Tambah Promo" styleClass="section-title"/>
+            <TextField fx:id="nameField" promptText="Nama promo"/>
+            <ComboBox fx:id="typeCombo" maxWidth="Infinity"/>
+            <TextField fx:id="valueField" promptText="Nilai promo: 10 / 5000"/>
+            <TextField fx:id="minPurchaseField" promptText="Minimal pembelian" text="0"/>
+            <DatePicker fx:id="startPicker" promptText="Tanggal mulai" maxWidth="Infinity"/>
+            <DatePicker fx:id="endPicker" promptText="Tanggal selesai" maxWidth="Infinity"/>
+            <ComboBox fx:id="statusCombo" maxWidth="Infinity"/>
+            <Button text="Simpan" maxWidth="Infinity" onAction="#save" styleClass="primary-button"/>
+            <Button text="Hapus" maxWidth="Infinity" onAction="#delete" styleClass="danger-button"/>
+            <Button text="Reset" maxWidth="Infinity" onAction="#clear" styleClass="secondary-button"/>
+        </VBox>
+    </right>
+</BorderPane>

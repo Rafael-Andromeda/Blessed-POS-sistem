@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DashboardController" spacing="18" styleClass="page">
+    <Label text="Dashboard" styleClass="page-title"/>
+    <HBox spacing="16">
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Pendapatan Hari Ini" styleClass="muted-text"/><Label fx:id="todayRevenueLabel" styleClass="stat-value"/></VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Transaksi Hari Ini" styleClass="muted-text"/><Label fx:id="todayTransactionLabel" styleClass="stat-value"/></VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Rata-rata Transaksi" styleClass="muted-text"/><Label fx:id="averageLabel" styleClass="stat-value"/></VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Order / Customer" styleClass="muted-text"/><Label fx:id="customerLabel" styleClass="stat-value"/></VBox>
+    </HBox>
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <VBox spacing="8" HBox.hgrow="ALWAYS" styleClass="panel">
+            <Label text="Grafik Penjualan Mingguan" styleClass="section-title"/>
+            <LineChart fx:id="weeklyChart" animated="false" legendVisible="false" VBox.vgrow="ALWAYS">
+                <xAxis><CategoryAxis label="Tanggal"/></xAxis>
+                <yAxis><NumberAxis label="Total"/></yAxis>
+            </LineChart>
+        </VBox>
+        <VBox spacing="8" prefWidth="360" styleClass="panel">
+            <Label text="Menu Terlaris" styleClass="section-title"/>
+            <PieChart fx:id="bestMenuChart" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </HBox>
+    <VBox spacing="8" styleClass="panel">
+        <Label text="Pesanan Terbaru" styleClass="section-title"/>
+        <TableView fx:id="recentTable" prefHeight="190">
+            <columns>
+                <TableColumn fx:id="codeColumn" text="ID" prefWidth="120"/>
+                <TableColumn fx:id="dateColumn" text="Tanggal" prefWidth="160"/>
+                <TableColumn fx:id="itemsColumn" text="Items" prefWidth="380"/>
+                <TableColumn fx:id="paymentColumn" text="Bayar" prefWidth="100"/>
+                <TableColumn fx:id="totalColumn" text="Total" prefWidth="130"/>
+            </columns>
+        </TableView>
+    </VBox>
+</VBox>

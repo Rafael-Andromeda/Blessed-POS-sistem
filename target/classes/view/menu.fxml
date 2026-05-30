@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MenuController" styleClass="page">
+    <top>
+        <VBox spacing="12">
+            <Label text="Menu Management" styleClass="page-title"/>
+            <HBox spacing="10"><TextField fx:id="searchField" promptText="Cari menu..." prefWidth="260"/><ComboBox fx:id="filterCombo" prefWidth="160"/></HBox>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="transparent-scroll"><GridPane fx:id="menuGrid" hgap="14" vgap="14"><padding><Insets top="16" right="16" bottom="16" left="0"/></padding></GridPane></ScrollPane>
+    </center>
+    <right>
+        <VBox spacing="12" prefWidth="330" styleClass="panel">
+            <Label fx:id="formTitleLabel" text="Tambah Menu" styleClass="section-title"/>
+            <TextField fx:id="nameField" promptText="Nama menu"/>
+            <ComboBox fx:id="categoryCombo" maxWidth="Infinity"/>
+            <TextField fx:id="priceField" promptText="Harga, contoh 18000"/>
+            <TextField fx:id="stockField" promptText="Stok"/>
+            <HBox spacing="8"><TextField fx:id="imageField" promptText="Path gambar" HBox.hgrow="ALWAYS"/><Button text="Pilih" onAction="#browseImage" styleClass="secondary-button"/></HBox>
+            <ComboBox fx:id="statusCombo" maxWidth="Infinity"/>
+            <Button text="Simpan" maxWidth="Infinity" onAction="#saveMenu" styleClass="primary-button"/>
+            <Button text="Reset Form" maxWidth="Infinity" onAction="#clearForm" styleClass="secondary-button"/>
+        </VBox>
+    </right>
+</BorderPane>

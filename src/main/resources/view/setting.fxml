@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SettingController" spacing="16" styleClass="page">
+    <Label text="Settings Aplikasi" styleClass="page-title"/>
+    <VBox spacing="12" maxWidth="560" styleClass="panel">
+        <Label text="Identitas Warung" styleClass="section-title"/>
+        <TextField fx:id="appNameField" promptText="Nama aplikasi"/>
+        <TextField fx:id="shopNameField" promptText="Nama warung"/>
+        <TextField fx:id="addressField" promptText="Alamat"/>
+        <TextField fx:id="phoneField" promptText="Nomor telepon"/>
+        <HBox spacing="8"><TextField fx:id="logoField" promptText="Path logo" HBox.hgrow="ALWAYS"/><Button text="Pilih Logo" onAction="#browseLogo" styleClass="secondary-button"/></HBox>
+        <Button text="Simpan Setting" onAction="#save" styleClass="primary-button" maxWidth="Infinity"/>
+        <Label text="Catatan: logo di sidebar akan refresh setelah login ulang." styleClass="muted-text"/>
+    </VBox>
+</VBox>

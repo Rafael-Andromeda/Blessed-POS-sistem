@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.InventoryController" styleClass="page">
+    <top><VBox spacing="10"><Label text="Inventory / Bahan Baku" styleClass="page-title"/><Label fx:id="alertLabel" text="Low Stock Alert: beberapa bahan hampir habis" styleClass="alert-box"/></VBox></top>
+    <center>
+        <TableView fx:id="table">
+            <columns>
+                <TableColumn fx:id="nameColumn" text="Nama Bahan" prefWidth="220"/>
+                <TableColumn fx:id="stockColumn" text="Stok" prefWidth="90"/>
+                <TableColumn fx:id="unitColumn" text="Satuan" prefWidth="100"/>
+                <TableColumn fx:id="minColumn" text="Batas Minimum" prefWidth="130"/>
+                <TableColumn fx:id="statusColumn" text="Status" prefWidth="140"/>
+            </columns>
+        </TableView>
+    </center>
+    <right>
+        <VBox spacing="12" prefWidth="320" styleClass="panel">
+            <Label fx:id="formTitleLabel" text="Tambah Bahan" styleClass="section-title"/>
+            <TextField fx:id="nameField" promptText="Nama bahan"/>
+            <TextField fx:id="stockField" promptText="Stok"/>
+            <ComboBox fx:id="unitCombo" maxWidth="Infinity"/>
+            <TextField fx:id="minField" promptText="Batas minimum"/>
+            <Button text="Simpan" maxWidth="Infinity" onAction="#save" styleClass="primary-button"/>
+            <Button text="Hapus" maxWidth="Infinity" onAction="#delete" styleClass="danger-button"/>
+            <Button text="Reset" maxWidth="Infinity" onAction="#clear" styleClass="secondary-button"/>
+        </VBox>
+    </right>
+</BorderPane>

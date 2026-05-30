@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController" styleClass="login-root">
+    <left>
+        <VBox alignment="CENTER_LEFT" spacing="18" prefWidth="480" styleClass="login-brand">
+            <padding><Insets top="60" right="50" bottom="60" left="50"/></padding>
+            <Label text="NasiGoreng 71" styleClass="login-title"/>
+            <Label text="Point of Sale untuk warung makan dengan transaksi cepat, laporan penjualan, promo, inventory, dan nota otomatis." wrapText="true" styleClass="login-subtitle"/>
+            <Label text="SQLite • JavaFX • Rupiah IDR" styleClass="pill"/>
+        </VBox>
+    </left>
+    <center>
+        <VBox alignment="CENTER" spacing="18" styleClass="login-panel-wrapper">
+            <VBox alignment="CENTER_LEFT" spacing="14" maxWidth="360" styleClass="login-card">
+                <Label text="Masuk ke POS" styleClass="section-title"/>
+                <Label text="Gunakan akun admin atau kasir" styleClass="muted-text"/>
+                <TextField fx:id="usernameField" promptText="Username" />
+                <PasswordField fx:id="passwordField" promptText="Password" onAction="#handleLogin" />
+                <Label fx:id="errorLabel" styleClass="error-text"/>
+                <Button text="Login" maxWidth="Infinity" onAction="#handleLogin" styleClass="primary-button"/>
+                <Button text="Lihat Akun Demo" maxWidth="Infinity" onAction="#showDemoInfo" styleClass="secondary-button"/>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

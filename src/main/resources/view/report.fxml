@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ReportController" spacing="16" styleClass="page">
+    <HBox alignment="CENTER_LEFT" spacing="10"><Label text="Reports / Laporan Penjualan" styleClass="page-title"/><Region HBox.hgrow="ALWAYS"/><Button text="Refresh" onAction="#reload" styleClass="secondary-button"/></HBox>
+    <HBox spacing="16">
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Pendapatan Bulanan" styleClass="muted-text"/><Label fx:id="monthlyRevenueLabel" styleClass="stat-value"/></VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Total Transaksi" styleClass="muted-text"/><Label fx:id="totalTransactionLabel" styleClass="stat-value"/></VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Rata-rata Transaksi" styleClass="muted-text"/><Label fx:id="averageTransactionLabel" styleClass="stat-value"/></VBox>
+    </HBox>
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <VBox spacing="8" HBox.hgrow="ALWAYS" styleClass="panel">
+            <Label text="Grafik Penjualan Harian" styleClass="section-title"/>
+            <LineChart fx:id="dailyChart" animated="false" legendVisible="false" VBox.vgrow="ALWAYS"><xAxis><CategoryAxis label="Tanggal"/></xAxis><yAxis><NumberAxis label="Total"/></yAxis></LineChart>
+        </VBox>
+        <VBox spacing="8" prefWidth="370" styleClass="panel">
+            <Label text="Menu Terlaris" styleClass="section-title"/>
+            <PieChart fx:id="bestMenuChart" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </HBox>
+    <VBox spacing="8" styleClass="panel">
+        <Label text="Penjualan Berdasarkan Kategori" styleClass="section-title"/>
+        <BarChart fx:id="categoryChart" animated="false" legendVisible="false" prefHeight="230"><xAxis><CategoryAxis label="Kategori"/></xAxis><yAxis><NumberAxis label="Total"/></yAxis></BarChart>
+    </VBox>
+</VBox>

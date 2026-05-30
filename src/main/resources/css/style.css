@@ -1,0 +1,183 @@
+.root {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-background-color: #F4F7F7;
+}
+.login-root { -fx-background-color: #F4F7F7; }
+.login-brand {
+    -fx-background-color: linear-gradient(to bottom right, #00594C, #009688);
+}
+.login-title {
+    -fx-text-fill: white;
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+}
+.login-subtitle {
+    -fx-text-fill: #E8FFFC;
+    -fx-font-size: 16px;
+    -fx-line-spacing: 4px;
+}
+.login-panel-wrapper { -fx-background-color: #F4F7F7; }
+.login-card, .panel, .cart-panel, .stat-card, .menu-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 18, 0, 0, 6);
+    -fx-padding: 18;
+}
+.sidebar {
+    -fx-background-color: #00594C;
+}
+.sidebar-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+.sidebar-subtitle {
+    -fx-text-fill: #BFE7E2;
+    -fx-font-size: 12px;
+}
+.logo-image {
+    -fx-background-radius: 12;
+}
+.nav-button, .logout-button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 11 13 11 13;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+}
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E8FFFC;
+}
+.nav-button:hover {
+    -fx-background-color: rgba(255,255,255,0.16);
+}
+.nav-button:disabled {
+    -fx-opacity: 0.42;
+}
+.logout-button {
+    -fx-background-color: #FF3045;
+    -fx-text-fill: white;
+}
+.user-box {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 16;
+    -fx-padding: 12;
+}
+.avatar {
+    -fx-background-color: #009688;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-alignment: center;
+    -fx-background-radius: 100;
+}
+.user-name { -fx-text-fill: white; -fx-font-weight: bold; }
+.user-role { -fx-text-fill: #BFE7E2; -fx-font-size: 12px; }
+.content-root, .page {
+    -fx-background-color: #F4F7F7;
+    -fx-padding: 22;
+}
+.page-title {
+    -fx-text-fill: #00594C;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+.section-title {
+    -fx-text-fill: #00594C;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+.stat-card { -fx-spacing: 6; }
+.stat-value {
+    -fx-text-fill: #009688;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+.muted-text { -fx-text-fill: #6B7C7C; }
+.price-text, .amount-text {
+    -fx-text-fill: #009688;
+    -fx-font-weight: bold;
+}
+.grand-total {
+    -fx-text-fill: #00594C;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+.primary-button, .secondary-button, .danger-button, .round-button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 9 14 9 14;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.primary-button {
+    -fx-background-color: #009688;
+    -fx-text-fill: white;
+}
+.secondary-button {
+    -fx-background-color: #BFE7E2;
+    -fx-text-fill: #00594C;
+}
+.danger-button {
+    -fx-background-color: #FF3045;
+    -fx-text-fill: white;
+}
+.round-button {
+    -fx-background-color: #009688;
+    -fx-text-fill: white;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-background-radius: 100;
+}
+.menu-card {
+    -fx-min-width: 210;
+    -fx-pref-width: 230;
+    -fx-min-height: 145;
+}
+.card-title {
+    -fx-text-fill: #00594C;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+.cart-panel { -fx-padding: 18; }
+.text-field, .password-field, .combo-box, .date-picker {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12;
+    -fx-border-color: #D6E7E5;
+    -fx-border-radius: 12;
+    -fx-padding: 8;
+}
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-radius: 14;
+    -fx-border-color: #E4EEEE;
+    -fx-border-radius: 14;
+}
+.table-view .column-header-background {
+    -fx-background-color: #BFE7E2;
+    -fx-background-radius: 14 14 0 0;
+}
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+}
+.alert-box {
+    -fx-background-color: #FFF0DF;
+    -fx-text-fill: #B85B00;
+    -fx-padding: 10;
+    -fx-background-radius: 12;
+    -fx-font-weight: bold;
+}
+.error-text { -fx-text-fill: #FF3045; -fx-font-weight: bold; }
+.pill {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-text-fill: white;
+    -fx-padding: 8 12 8 12;
+    -fx-background-radius: 100;
+}
+.transparent-scroll, .transparent-scroll > .viewport { -fx-background-color: transparent; }
+.chart-plot-background { -fx-background-color: transparent; }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainLayoutController">
+    <left>
+        <VBox prefWidth="245" spacing="12" styleClass="sidebar">
+            <padding><Insets top="22" right="18" bottom="18" left="18"/></padding>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <ImageView fx:id="logoImage" fitWidth="44" fitHeight="44" preserveRatio="true" styleClass="logo-image"/>
+                <VBox>
+                    <Label fx:id="appNameLabel" text="NasiGoreng 71" styleClass="sidebar-title"/>
+                    <Label fx:id="shopLabel" text="Point of Sale" styleClass="sidebar-subtitle"/>
+                </VBox>
+            </HBox>
+            <Separator/>
+            <Button fx:id="dashboardButton" text="Dashboard" maxWidth="Infinity" onAction="#openDashboard" styleClass="nav-button"/>
+            <Button fx:id="menuButton" text="Menu Management" maxWidth="Infinity" onAction="#openMenu" styleClass="nav-button"/>
+            <Button fx:id="cashierButton" text="Cashier" maxWidth="Infinity" onAction="#openCashier" styleClass="nav-button"/>
+            <Button fx:id="inventoryButton" text="Inventory" maxWidth="Infinity" onAction="#openInventory" styleClass="nav-button"/>
+            <Button fx:id="historyButton" text="Transaction History" maxWidth="Infinity" onAction="#openHistory" styleClass="nav-button"/>
+            <Button fx:id="reportButton" text="Reports" maxWidth="Infinity" onAction="#openReport" styleClass="nav-button"/>
+            <Button fx:id="promoButton" text="Promo" maxWidth="Infinity" onAction="#openPromo" styleClass="nav-button"/>
+            <Button fx:id="settingButton" text="Settings" maxWidth="Infinity" onAction="#openSetting" styleClass="nav-button"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="user-box">
+                <Label fx:id="userInitialLabel" text="JD" styleClass="avatar"/>
+                <VBox>
+                    <Label fx:id="userNameLabel" text="John Doe" styleClass="user-name"/>
+                    <Label fx:id="userRoleLabel" text="Kasir" styleClass="user-role"/>
+                </VBox>
+            </HBox>
+            <Button text="Logout" maxWidth="Infinity" onAction="#logout" styleClass="logout-button"/>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentPane" styleClass="content-root" />
+    </center>
+</BorderPane>
