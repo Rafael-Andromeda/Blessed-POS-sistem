@@ -5,8 +5,10 @@
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.HistoryController" spacing="14" styleClass="page">
     <Label text="Transaction History" styleClass="page-title"/>
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <TextField fx:id="searchField" promptText="Cari ID, menu, tanggal, pembayaran..." prefWidth="330"/>
-        <ComboBox fx:id="monthCombo" prefWidth="130"/>
+        <TextField fx:id="searchField" promptText="Cari ID, menu, tanggal, pembayaran..." prefWidth="310"/>
+        <ComboBox fx:id="monthCombo" prefWidth="110"/>
+        <ComboBox fx:id="yearCombo" prefWidth="110"/>
+        <Button text="Reset Filter" onAction="#resetFilter" styleClass="secondary-button"/>
         <Button text="Detail" onAction="#showSelectedDetail" styleClass="secondary-button"/>
         <Button text="Export CSV" onAction="#exportCSV" styleClass="primary-button"/>
     </HBox>
