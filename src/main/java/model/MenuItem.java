@@ -10,12 +10,17 @@ public class MenuItem {
     private int stok;
     private String gambar;
     private String status;
+    private int isDeleted;
     private String createdAt;
     private String updatedAt;
 
     public MenuItem() {}
 
     public MenuItem(int idMenu, String namaMenu, String kategori, int harga, int stok, String gambar, String status, String createdAt, String updatedAt) {
+        this(idMenu, namaMenu, kategori, harga, stok, gambar, status, 0, createdAt, updatedAt);
+    }
+
+    public MenuItem(int idMenu, String namaMenu, String kategori, int harga, int stok, String gambar, String status, int isDeleted, String createdAt, String updatedAt) {
         this.idMenu = idMenu;
         this.namaMenu = namaMenu;
         this.kategori = kategori;
@@ -23,6 +28,7 @@ public class MenuItem {
         this.stok = stok;
         this.gambar = gambar;
         this.status = status;
+        this.isDeleted = isDeleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -41,6 +47,8 @@ public class MenuItem {
     public void setGambar(String gambar) { this.gambar = gambar; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public int getIsDeleted() { return isDeleted; }
+    public void setIsDeleted(int isDeleted) { this.isDeleted = isDeleted; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
     public String getUpdatedAt() { return updatedAt; }

@@ -7,16 +7,21 @@ public class TransactionDetail {
     private int idTransaksi;
     private int idMenu;
     private String namaMenu;
+    private String kategori;
     private int harga;
     private int qty;
     private int total;
 
     public TransactionDetail() {}
     public TransactionDetail(int idDetail, int idTransaksi, int idMenu, String namaMenu, int harga, int qty, int total) {
+        this(idDetail, idTransaksi, idMenu, namaMenu, "-", harga, qty, total);
+    }
+    public TransactionDetail(int idDetail, int idTransaksi, int idMenu, String namaMenu, String kategori, int harga, int qty, int total) {
         this.idDetail = idDetail;
         this.idTransaksi = idTransaksi;
         this.idMenu = idMenu;
         this.namaMenu = namaMenu;
+        this.kategori = kategori;
         this.harga = harga;
         this.qty = qty;
         this.total = total;
@@ -29,6 +34,8 @@ public class TransactionDetail {
     public void setIdMenu(int idMenu) { this.idMenu = idMenu; }
     public String getNamaMenu() { return namaMenu; }
     public void setNamaMenu(String namaMenu) { this.namaMenu = namaMenu; }
+    public String getKategori() { return kategori; }
+    public void setKategori(String kategori) { this.kategori = kategori; }
     public int getHarga() { return harga; }
     public void setHarga(int harga) { this.harga = harga; }
     public int getQty() { return qty; }
