@@ -1,0 +1,71 @@
+package dao;
+
+import database.DatabaseConnection;
+import model.Ingredient;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class IngredientDAO {
+    public List<Ingredient> findAll() {
+        List<Ingredient> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement("SELECT * FROM ingredients ORDER BY nama_bahan")) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) list.add(map(rs));
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
+    }
+
+    public boolean insert(Ingredient i) {
+        String sql = "INSERT INTO ingredients(nama_bahan,stok,satuan,batas_minimum,status,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP)";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            fill(ps, i, false);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { e.printStackTrace(); return false; }
+    }
+
+    public boolean update(Ingredient i) {
+        String sql = "UPDATE ingredients SET nama_bahan=?, stok=?, satuan=?, batas_minimum=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id_bahan=?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            fill(ps, i, true);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { e.printStackTrace(); return false; }
+    }
+
+    public boolean delete(int id) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement("DELETE FROM ingredients WHERE id_bahan=?")) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { e.printStackTrace(); return false; }
+    }
+
+    public boolean hasLowStock() {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM ingredients WHERE stok <= batas_minimum")) {
+            ResultSet rs = ps.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        } catch (SQLException e) { e.printStackTrace(); return false; }
+    }
+
+    private void fill(PreparedStatement ps, Ingredient i, boolean includeId) throws SQLException {
+        String status = statusFor(i.getStok(), i.getBatasMinimum());
+        ps.setString(1, i.getNamaBahan());
+        ps.setDouble(2, i.getStok());
+        ps.setString(3, i.getSatuan());
+        ps.setDouble(4, i.getBatasMinimum());
+        ps.setString(5, status);
+        if (includeId) ps.setInt(6, i.getIdBahan());
+    }
+
+    public static String statusFor(double stok, double min) {
+        if (stok <= 0) return "Out of Stock";
+        if (stok <= min) return "Low Stock";
+        return "In Stock";
+    }
+
+    private Ingredient map(ResultSet rs) throws SQLException {
+        return new Ingredient(rs.getInt("id_bahan"), rs.getString("nama_bahan"), rs.getDouble("stok"),
+                rs.getString("satuan"), rs.getDouble("batas_minimum"), rs.getString("status"),
+                rs.getString("created_at"), rs.getString("updated_at"));
+    }
+}
