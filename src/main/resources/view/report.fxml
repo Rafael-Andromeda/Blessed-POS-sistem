@@ -4,9 +4,18 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ReportController" spacing="16" styleClass="page">
-    <HBox alignment="CENTER_LEFT" spacing="10"><Label text="Reports / Laporan Penjualan" styleClass="page-title"/><Region HBox.hgrow="ALWAYS"/><Button text="Refresh" onAction="#reload" styleClass="secondary-button"/></HBox>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Reports / Laporan Penjualan" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Bulan" styleClass="muted-text"/>
+        <ComboBox fx:id="monthCombo" prefWidth="120"/>
+        <Label text="Tahun" styleClass="muted-text"/>
+        <ComboBox fx:id="yearCombo" prefWidth="120"/>
+        <Button text="Filter" onAction="#reload" styleClass="primary-button"/>
+        <Button text="Reset Filter" onAction="#resetFilter" styleClass="secondary-button"/>
+    </HBox>
     <HBox spacing="16">
-        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Pendapatan Bulanan" styleClass="muted-text"/><Label fx:id="monthlyRevenueLabel" styleClass="stat-value"/></VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Total Penjualan" styleClass="muted-text"/><Label fx:id="monthlyRevenueLabel" styleClass="stat-value"/></VBox>
         <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Total Transaksi" styleClass="muted-text"/><Label fx:id="totalTransactionLabel" styleClass="stat-value"/></VBox>
         <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Rata-rata Transaksi" styleClass="muted-text"/><Label fx:id="averageTransactionLabel" styleClass="stat-value"/></VBox>
     </HBox>

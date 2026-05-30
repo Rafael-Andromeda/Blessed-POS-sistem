@@ -14,16 +14,36 @@
         <ScrollPane fitToWidth="true" styleClass="transparent-scroll"><GridPane fx:id="menuGrid" hgap="14" vgap="14"><padding><Insets top="16" right="16" bottom="16" left="0"/></padding></GridPane></ScrollPane>
     </center>
     <right>
-        <VBox spacing="12" prefWidth="330" styleClass="panel">
-            <Label fx:id="formTitleLabel" text="Tambah Menu" styleClass="section-title"/>
-            <TextField fx:id="nameField" promptText="Nama menu"/>
-            <ComboBox fx:id="categoryCombo" maxWidth="Infinity"/>
-            <TextField fx:id="priceField" promptText="Harga, contoh 18000"/>
-            <TextField fx:id="stockField" promptText="Stok"/>
-            <HBox spacing="8"><TextField fx:id="imageField" promptText="Path gambar" HBox.hgrow="ALWAYS"/><Button text="Pilih" onAction="#browseImage" styleClass="secondary-button"/></HBox>
-            <ComboBox fx:id="statusCombo" maxWidth="Infinity"/>
-            <Button text="Simpan" maxWidth="Infinity" onAction="#saveMenu" styleClass="primary-button"/>
-            <Button text="Reset Form" maxWidth="Infinity" onAction="#clearForm" styleClass="secondary-button"/>
-        </VBox>
+        <ScrollPane fitToWidth="true" prefWidth="430" styleClass="transparent-scroll">
+            <VBox spacing="12" prefWidth="410" styleClass="panel">
+                <Label fx:id="formTitleLabel" text="Tambah Menu" styleClass="section-title"/>
+                <TextField fx:id="nameField" promptText="Nama menu"/>
+                <ComboBox fx:id="categoryCombo" maxWidth="Infinity"/>
+                <TextField fx:id="priceField" promptText="Harga, contoh 18000"/>
+                <TextField fx:id="stockField" promptText="Stok fallback / stok awal"/>
+                <HBox spacing="8"><TextField fx:id="imageField" promptText="Path gambar" HBox.hgrow="ALWAYS"/><Button text="Pilih" onAction="#browseImage" styleClass="secondary-button"/></HBox>
+                <ComboBox fx:id="statusCombo" maxWidth="Infinity"/>
+
+                <Separator/>
+                <Label text="Komposisi Bahan Baku per 1 Menu" styleClass="section-title"/>
+                <ComboBox fx:id="ingredientCombo" promptText="Pilih bahan baku" maxWidth="Infinity"/>
+                <HBox spacing="8">
+                    <TextField fx:id="ingredientQtyField" promptText="Jumlah kebutuhan" HBox.hgrow="ALWAYS"/>
+                    <Button text="Tambah" onAction="#addIngredient" styleClass="secondary-button"/>
+                </HBox>
+                <TableView fx:id="ingredientTable" prefHeight="180">
+                    <columns>
+                        <TableColumn fx:id="ingredientColumn" text="Bahan" prefWidth="165"/>
+                        <TableColumn fx:id="requiredColumn" text="Jumlah" prefWidth="90"/>
+                        <TableColumn fx:id="unitColumn" text="Satuan" prefWidth="80"/>
+                    </columns>
+                </TableView>
+                <Button text="Hapus Bahan Terpilih" maxWidth="Infinity" onAction="#removeIngredient" styleClass="danger-button"/>
+                <Label text="Stok menu otomatis dihitung dari bahan baku paling terbatas." wrapText="true" styleClass="muted-text"/>
+
+                <Button text="Simpan" maxWidth="Infinity" onAction="#saveMenu" styleClass="primary-button"/>
+                <Button text="Reset Form" maxWidth="Infinity" onAction="#clearForm" styleClass="secondary-button"/>
+            </VBox>
+        </ScrollPane>
     </right>
 </BorderPane>
