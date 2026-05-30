@@ -1,5 +1,6 @@
 package database;
 
+import dao.MenuDAO;
 import utils.PasswordUtil;
 
 import java.sql.Connection;
@@ -12,7 +13,11 @@ public class DatabaseInitializer {
         try (Connection conn = DatabaseConnection.getConnection(); Statement st = conn.createStatement()) {
             st.execute("PRAGMA foreign_keys = ON");
             createTables(st);
+            migrateExistingDatabase(conn, st);
             seedData(st);
+            seedSupportIngredients(st);
+            seedDefaultMenuRecipes(st);
+            MenuDAO.refreshMenuStockFromIngredients(conn, null);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -36,6 +41,7 @@ public class DatabaseInitializer {
                 "stok INTEGER DEFAULT 0," +
                 "gambar TEXT," +
                 "status TEXT DEFAULT 'Aktif'," +
+                "is_deleted INTEGER DEFAULT 0," +
                 "created_at TEXT DEFAULT CURRENT_TIMESTAMP," +
                 "updated_at TEXT)");
 
@@ -48,6 +54,14 @@ public class DatabaseInitializer {
                 "status TEXT DEFAULT 'In Stock'," +
                 "created_at TEXT DEFAULT CURRENT_TIMESTAMP," +
                 "updated_at TEXT)");
+
+        st.execute("CREATE TABLE IF NOT EXISTS menu_bahan_baku (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "menu_id INTEGER NOT NULL," +
+                "bahan_baku_id INTEGER NOT NULL," +
+                "jumlah_dibutuhkan REAL NOT NULL," +
+                "FOREIGN KEY (menu_id) REFERENCES menu_items(id_menu)," +
+                "FOREIGN KEY (bahan_baku_id) REFERENCES ingredients(id_bahan))");
 
         st.execute("CREATE TABLE IF NOT EXISTS promos (" +
                 "id_promo INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -96,6 +110,23 @@ public class DatabaseInitializer {
                 "updated_at TEXT)");
     }
 
+    private static void migrateExistingDatabase(Connection conn, Statement st) throws SQLException {
+        if (!columnExists(conn, "menu_items", "is_deleted")) {
+            st.execute("ALTER TABLE menu_items ADD COLUMN is_deleted INTEGER DEFAULT 0");
+        }
+        st.execute("UPDATE menu_items SET is_deleted=0 WHERE is_deleted IS NULL");
+    }
+
+    private static boolean columnExists(Connection conn, String table, String column) throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getColumns(null, null, table, column)) {
+            if (rs.next()) return true;
+        }
+        try (ResultSet rs = conn.createStatement().executeQuery("PRAGMA table_info(" + table + ")")) {
+            while (rs.next()) if (column.equalsIgnoreCase(rs.getString("name"))) return true;
+        }
+        return false;
+    }
+
     private static boolean isEmpty(Statement st, String table) throws SQLException {
         ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM " + table);
         return rs.next() && rs.getInt(1) == 0;
@@ -108,16 +139,16 @@ public class DatabaseInitializer {
                     "('Kasir', 'kasir', '" + PasswordUtil.hashPassword("kasir123") + "', 'Kasir')");
         }
         if (isEmpty(st, "menu_items")) {
-            st.executeUpdate("INSERT INTO menu_items(nama_menu, kategori, harga, stok, gambar, status) VALUES " +
-                    "('Nasi Goreng','Makanan',18000,50,'','Aktif')," +
-                    "('Nasi Goreng Spesial','Makanan',22000,40,'','Aktif')," +
-                    "('Mie Goreng','Makanan',16000,35,'','Aktif')," +
-                    "('Ayam Geprek','Makanan',20000,30,'','Aktif')," +
-                    "('Es Teh','Minuman',5000,100,'','Aktif')," +
-                    "('Es Jeruk','Minuman',7000,80,'','Aktif')," +
-                    "('Kopi Hitam','Minuman',8000,60,'','Aktif')," +
-                    "('Kentang Goreng','Side Dish',12000,50,'','Aktif')," +
-                    "('Telur Ceplok','Side Dish',5000,100,'','Aktif')");
+            st.executeUpdate("INSERT INTO menu_items(nama_menu, kategori, harga, stok, gambar, status, is_deleted) VALUES " +
+                    "('Nasi Goreng','Makanan',18000,50,'','Aktif',0)," +
+                    "('Nasi Goreng Spesial','Makanan',22000,40,'','Aktif',0)," +
+                    "('Mie Goreng','Makanan',16000,35,'','Aktif',0)," +
+                    "('Ayam Geprek','Makanan',20000,30,'','Aktif',0)," +
+                    "('Es Teh','Minuman',5000,100,'','Aktif',0)," +
+                    "('Es Jeruk','Minuman',7000,80,'','Aktif',0)," +
+                    "('Kopi Hitam','Minuman',8000,60,'','Aktif',0)," +
+                    "('Kentang Goreng','Side Dish',12000,50,'','Aktif',0)," +
+                    "('Telur Ceplok','Side Dish',5000,100,'','Aktif',0)");
         }
         if (isEmpty(st, "ingredients")) {
             st.executeUpdate("INSERT INTO ingredients(nama_bahan, stok, satuan, batas_minimum, status) VALUES " +
@@ -139,5 +170,63 @@ public class DatabaseInitializer {
             st.executeUpdate("INSERT INTO app_settings(nama_aplikasi, nama_warung, alamat, telepon, logo_path, updated_at) " +
                     "VALUES ('NasiGoreng 71','Warung Makan','Jl. Contoh No. 71','081234567890','',CURRENT_TIMESTAMP)");
         }
+    }
+
+    private static void seedSupportIngredients(Statement st) throws SQLException {
+        insertIngredientIfMissing(st, "Jeruk", 80, "pcs", 20);
+        insertIngredientIfMissing(st, "Kopi", 5, "kg", 1);
+        insertIngredientIfMissing(st, "Kentang", 25, "kg", 5);
+    }
+
+    private static void insertIngredientIfMissing(Statement st, String name, double stock, String unit, double min) throws SQLException {
+        st.executeUpdate("INSERT INTO ingredients(nama_bahan, stok, satuan, batas_minimum, status, updated_at) " +
+                "SELECT '" + name + "', " + stock + ", '" + unit + "', " + min + ", 'In Stock', CURRENT_TIMESTAMP " +
+                "WHERE NOT EXISTS (SELECT 1 FROM ingredients WHERE nama_bahan='" + name + "')");
+    }
+
+    private static void seedDefaultMenuRecipes(Statement st) throws SQLException {
+        if (!isEmpty(st, "menu_bahan_baku")) return;
+        addRecipe(st, "Nasi Goreng", "Beras", 0.20);
+        addRecipe(st, "Nasi Goreng", "Telur", 1);
+        addRecipe(st, "Nasi Goreng", "Bumbu Nasi Goreng", 0.05);
+        addRecipe(st, "Nasi Goreng", "Minyak", 0.03);
+
+        addRecipe(st, "Nasi Goreng Spesial", "Beras", 0.25);
+        addRecipe(st, "Nasi Goreng Spesial", "Telur", 2);
+        addRecipe(st, "Nasi Goreng Spesial", "Ayam", 0.15);
+        addRecipe(st, "Nasi Goreng Spesial", "Bumbu Nasi Goreng", 0.07);
+        addRecipe(st, "Nasi Goreng Spesial", "Minyak", 0.04);
+
+        addRecipe(st, "Mie Goreng", "Mie", 1);
+        addRecipe(st, "Mie Goreng", "Telur", 1);
+        addRecipe(st, "Mie Goreng", "Bumbu Nasi Goreng", 0.05);
+        addRecipe(st, "Mie Goreng", "Minyak", 0.03);
+
+        addRecipe(st, "Ayam Geprek", "Ayam", 0.25);
+        addRecipe(st, "Ayam Geprek", "Beras", 0.20);
+        addRecipe(st, "Ayam Geprek", "Minyak", 0.05);
+
+        addRecipe(st, "Es Teh", "Teh", 0.02);
+        addRecipe(st, "Es Teh", "Gula", 0.03);
+
+        addRecipe(st, "Es Jeruk", "Jeruk", 1);
+        addRecipe(st, "Es Jeruk", "Gula", 0.03);
+
+        addRecipe(st, "Kopi Hitam", "Kopi", 0.02);
+        addRecipe(st, "Kopi Hitam", "Gula", 0.02);
+
+        addRecipe(st, "Kentang Goreng", "Kentang", 0.20);
+        addRecipe(st, "Kentang Goreng", "Minyak", 0.05);
+
+        addRecipe(st, "Telur Ceplok", "Telur", 1);
+        addRecipe(st, "Telur Ceplok", "Minyak", 0.01);
+    }
+
+    private static void addRecipe(Statement st, String menuName, String ingredientName, double amount) throws SQLException {
+        st.executeUpdate("INSERT INTO menu_bahan_baku(menu_id, bahan_baku_id, jumlah_dibutuhkan) " +
+                "SELECT m.id_menu, i.id_bahan, " + amount + " " +
+                "FROM menu_items m, ingredients i " +
+                "WHERE m.nama_menu='" + menuName + "' AND i.nama_bahan='" + ingredientName + "' " +
+                "AND NOT EXISTS (SELECT 1 FROM menu_bahan_baku mbb WHERE mbb.menu_id=m.id_menu AND mbb.bahan_baku_id=i.id_bahan)");
     }
 }
