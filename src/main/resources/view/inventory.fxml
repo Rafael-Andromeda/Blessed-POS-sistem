@@ -1,30 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.InventoryController" styleClass="page">
-    <top><VBox spacing="10"><Label text="Inventory / Bahan Baku" styleClass="page-title"/><Label fx:id="alertLabel" text="Low Stock Alert: beberapa bahan hampir habis" styleClass="alert-box"/></VBox></top>
+    <top>
+        <VBox spacing="10">
+            <Label text="Inventory &amp; Pembelian Bahan" styleClass="page-title"/>
+            <Label text="Kelola stok bahan baku, data bahan, dan pembelian supplier dalam satu halaman." styleClass="muted-text"/>
+            <Label fx:id="alertLabel" text="Low Stock Alert: beberapa bahan hampir habis" styleClass="alert-box"/>
+        </VBox>
+    </top>
+
     <center>
-        <TableView fx:id="table">
-            <columns>
-                <TableColumn fx:id="nameColumn" text="Nama Bahan" prefWidth="220"/>
-                <TableColumn fx:id="stockColumn" text="Stok" prefWidth="90"/>
-                <TableColumn fx:id="unitColumn" text="Satuan" prefWidth="100"/>
-                <TableColumn fx:id="minColumn" text="Batas Minimum" prefWidth="130"/>
-                <TableColumn fx:id="statusColumn" text="Status" prefWidth="140"/>
-            </columns>
-        </TableView>
+        <VBox spacing="14">
+            <BorderPane.margin>
+                <Insets top="0" right="16" bottom="0" left="0"/>
+            </BorderPane.margin>
+            <VBox spacing="8" styleClass="panel" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Daftar Stok Bahan" styleClass="section-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Refresh" onAction="#refreshAll" styleClass="secondary-button"/>
+                </HBox>
+                <TableView fx:id="table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="nameColumn" text="Nama Bahan" prefWidth="220"/>
+                        <TableColumn fx:id="stockColumn" text="Stok" prefWidth="90"/>
+                        <TableColumn fx:id="unitColumn" text="Satuan" prefWidth="100"/>
+                        <TableColumn fx:id="minColumn" text="Batas Minimum" prefWidth="130"/>
+                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="140"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <VBox spacing="10" styleClass="panel" VBox.vgrow="ALWAYS">
+                <Label text="Pembelian Bahan / Barang Masuk" styleClass="section-title"/>
+                <GridPane hgap="10" vgap="10">
+                    <Label text="Supplier" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="supplierCombo" prefWidth="230" promptText="Opsional" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Bahan Baku" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                    <ComboBox fx:id="purchaseIngredientCombo" prefWidth="230" promptText="Pilih bahan" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+
+                    <Label text="Jumlah" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="amountField" promptText="Contoh: 5" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Harga Satuan" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                    <TextField fx:id="priceField" promptText="Contoh: 12000" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+                    <Label text="Catatan" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="noteField" promptText="Opsional" GridPane.rowIndex="2" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+                </GridPane>
+                <HBox spacing="10">
+                    <Button text="Simpan Pembelian" onAction="#savePurchase" styleClass="primary-button"/>
+                    <Button text="Bersihkan Form Pembelian" onAction="#clearPurchase" styleClass="secondary-button"/>
+                </HBox>
+                <TableView fx:id="purchaseTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="purchaseDateColumn" text="Tanggal" prefWidth="160"/>
+                        <TableColumn fx:id="purchaseSupplierColumn" text="Supplier" prefWidth="170"/>
+                        <TableColumn fx:id="purchaseIngredientColumn" text="Bahan" prefWidth="170"/>
+                        <TableColumn fx:id="purchaseAmountColumn" text="Jumlah" prefWidth="90"/>
+                        <TableColumn fx:id="purchaseUnitColumn" text="Satuan" prefWidth="80"/>
+                        <TableColumn fx:id="purchaseTotalColumn" text="Total" prefWidth="130"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
     </center>
+
     <right>
         <VBox spacing="12" prefWidth="320" styleClass="panel">
-            <Label fx:id="formTitleLabel" text="Tambah Bahan" styleClass="section-title"/>
+            <Label fx:id="formTitleLabel" text="Tambah Data Bahan" styleClass="section-title"/>
+            <Label text="Gunakan form ini untuk data master bahan, satuan, batas minimum, dan koreksi stok manual." wrapText="true" styleClass="muted-text"/>
             <TextField fx:id="nameField" promptText="Nama bahan"/>
-            <TextField fx:id="stockField" promptText="Stok"/>
+            <TextField fx:id="stockField" promptText="Stok / koreksi stok manual"/>
             <ComboBox fx:id="unitCombo" maxWidth="Infinity"/>
             <TextField fx:id="minField" promptText="Batas minimum"/>
-            <Button text="Simpan" maxWidth="Infinity" onAction="#save" styleClass="primary-button"/>
-            <Button text="Hapus" maxWidth="Infinity" onAction="#delete" styleClass="danger-button"/>
-            <Button text="Reset" maxWidth="Infinity" onAction="#clear" styleClass="secondary-button"/>
+            <Button text="Simpan Data Bahan" maxWidth="Infinity" onAction="#save" styleClass="primary-button"/>
+            <Button text="Hapus Bahan" maxWidth="Infinity" onAction="#delete" styleClass="danger-button"/>
+            <Button text="Reset Form Bahan" maxWidth="Infinity" onAction="#clear" styleClass="secondary-button"/>
+            <Separator/>
+            <Label text="Catatan: pembelian bahan sekarang diinput dari bagian Pembelian Bahan pada halaman ini, bukan dari menu terpisah." wrapText="true" styleClass="muted-text"/>
         </VBox>
     </right>
 </BorderPane>

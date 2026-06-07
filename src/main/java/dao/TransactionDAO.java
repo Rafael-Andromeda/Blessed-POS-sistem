@@ -181,8 +181,7 @@ public class TransactionDAO {
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try {
-                // Use same connection to avoid SQLite lock
-                Transaction trx = findById(conn, idTransaksi);
+                Transaction trx = findById(idTransaksi);
                 if (trx == null) throw new SQLException("Transaksi tidak ditemukan.");
                 if ("Dibatalkan".equalsIgnoreCase(trx.getStatus())) throw new SQLException("Transaksi sudah dibatalkan.");
                 restoreStockAfterCancel(conn, idTransaksi);
@@ -244,18 +243,6 @@ public class TransactionDAO {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return map(rs);
         } catch (SQLException e) { e.printStackTrace(); }
-        return null;
-    }
-
-    private Transaction findById(Connection conn, int id) throws SQLException {
-        String sql = "SELECT t.*, u.nama AS kasir, " +
-                "(SELECT GROUP_CONCAT(nama_menu || ' x' || qty, ', ') FROM transaction_details WHERE id_transaksi=t.id_transaksi) AS items " +
-                "FROM transactions t JOIN users u ON t.id_user=u.id_user WHERE t.id_transaksi=?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return map(rs);
-        }
         return null;
     }
 

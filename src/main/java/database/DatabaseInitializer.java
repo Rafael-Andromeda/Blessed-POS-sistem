@@ -135,20 +135,44 @@ public class DatabaseInitializer {
     }
 
     private static void migrateExistingDatabase(Connection conn, Statement st) throws SQLException {
-        if (!columnExists(conn, "menu_items", "is_deleted")) {
-            st.execute("ALTER TABLE menu_items ADD COLUMN is_deleted INTEGER DEFAULT 0");
-        }
-        if (!columnExists(conn, "transactions", "status")) {
-            st.execute("ALTER TABLE transactions ADD COLUMN status TEXT DEFAULT 'Selesai'");
-        }
-        if (!columnExists(conn, "transactions", "cancel_reason")) {
-            st.execute("ALTER TABLE transactions ADD COLUMN cancel_reason TEXT");
-        }
-        if (!columnExists(conn, "transactions", "cancelled_at")) {
-            st.execute("ALTER TABLE transactions ADD COLUMN cancelled_at TEXT");
-        }
+        addColumnIfMissing(conn, st, "users", "status", "TEXT DEFAULT 'Aktif'");
+        addColumnIfMissing(conn, st, "users", "created_at", "TEXT");
+
+        addColumnIfMissing(conn, st, "menu_items", "gambar", "TEXT");
+        addColumnIfMissing(conn, st, "menu_items", "status", "TEXT DEFAULT 'Aktif'");
+        addColumnIfMissing(conn, st, "menu_items", "is_deleted", "INTEGER DEFAULT 0");
+        addColumnIfMissing(conn, st, "menu_items", "created_at", "TEXT");
+        addColumnIfMissing(conn, st, "menu_items", "updated_at", "TEXT");
+
+        addColumnIfMissing(conn, st, "ingredients", "status", "TEXT DEFAULT 'In Stock'");
+        addColumnIfMissing(conn, st, "ingredients", "created_at", "TEXT");
+        addColumnIfMissing(conn, st, "ingredients", "updated_at", "TEXT");
+
+        addColumnIfMissing(conn, st, "promos", "minimal_pembelian", "INTEGER DEFAULT 0");
+        addColumnIfMissing(conn, st, "promos", "tanggal_mulai", "TEXT");
+        addColumnIfMissing(conn, st, "promos", "tanggal_selesai", "TEXT");
+        addColumnIfMissing(conn, st, "promos", "status", "TEXT DEFAULT 'Aktif'");
+        addColumnIfMissing(conn, st, "promos", "created_at", "TEXT");
+        addColumnIfMissing(conn, st, "promos", "updated_at", "TEXT");
+
+        addColumnIfMissing(conn, st, "transactions", "status", "TEXT DEFAULT 'Selesai'");
+        addColumnIfMissing(conn, st, "transactions", "cancel_reason", "TEXT");
+        addColumnIfMissing(conn, st, "transactions", "cancelled_at", "TEXT");
+
+        addColumnIfMissing(conn, st, "app_settings", "logo_path", "TEXT");
+        addColumnIfMissing(conn, st, "app_settings", "updated_at", "TEXT");
+
+        st.execute("UPDATE users SET status='Aktif' WHERE status IS NULL OR TRIM(status)=''");
         st.execute("UPDATE menu_items SET is_deleted=0 WHERE is_deleted IS NULL");
+        st.execute("UPDATE menu_items SET status='Aktif' WHERE status IS NULL OR TRIM(status)=''");
+        st.execute("UPDATE ingredients SET status=CASE WHEN stok<=0 THEN 'Out of Stock' WHEN stok<=batas_minimum THEN 'Low Stock' ELSE 'In Stock' END WHERE status IS NULL OR TRIM(status)=''");
         st.execute("UPDATE transactions SET status='Selesai' WHERE status IS NULL OR status=''");
+    }
+
+    private static void addColumnIfMissing(Connection conn, Statement st, String table, String column, String definition) throws SQLException {
+        if (!columnExists(conn, table, column)) {
+            st.execute("ALTER TABLE " + table + " ADD COLUMN " + column + " " + definition);
+        }
     }
 
     private static boolean columnExists(Connection conn, String table, String column) throws SQLException {
@@ -167,11 +191,7 @@ public class DatabaseInitializer {
     }
 
     private static void seedData(Statement st) throws SQLException {
-        if (isEmpty(st, "users")) {
-            st.executeUpdate("INSERT INTO users(nama, username, password, role) VALUES " +
-                    "('Admin', 'admin', '" + PasswordUtil.hashPassword("admin123") + "', 'Admin')," +
-                    "('Kasir', 'kasir', '" + PasswordUtil.hashPassword("kasir123") + "', 'Kasir')");
-        }
+        ensureDefaultUsers(st);
         if (isEmpty(st, "menu_items")) {
             st.executeUpdate("INSERT INTO menu_items(nama_menu, kategori, harga, stok, gambar, status, is_deleted) VALUES " +
                     "('Nasi Goreng','Makanan',18000,50,'','Aktif',0)," +
@@ -204,6 +224,24 @@ public class DatabaseInitializer {
             st.executeUpdate("INSERT INTO app_settings(nama_aplikasi, nama_warung, alamat, telepon, logo_path, updated_at) " +
                     "VALUES ('NasiGoreng 71','Warung Makan','Jl. Contoh No. 71','081234567890','',CURRENT_TIMESTAMP)");
         }
+    }
+
+
+    private static void ensureDefaultUsers(Statement st) throws SQLException {
+        String adminHash = PasswordUtil.hashPassword("admin123");
+        String kasirHash = PasswordUtil.hashPassword("kasir123");
+
+        st.executeUpdate("INSERT INTO users(nama, username, password, role, status) " +
+                "SELECT 'Admin', 'admin', '" + adminHash + "', 'Admin', 'Aktif' " +
+                "WHERE NOT EXISTS (SELECT 1 FROM users WHERE LOWER(TRIM(username))='admin')");
+        st.executeUpdate("INSERT INTO users(nama, username, password, role, status) " +
+                "SELECT 'Kasir', 'kasir', '" + kasirHash + "', 'Kasir', 'Aktif' " +
+                "WHERE NOT EXISTS (SELECT 1 FROM users WHERE LOWER(TRIM(username))='kasir')");
+
+        st.executeUpdate("UPDATE users SET nama='Admin', password='" + adminHash + "', role='Admin', status='Aktif' " +
+                "WHERE LOWER(TRIM(username))='admin'");
+        st.executeUpdate("UPDATE users SET nama='Kasir', password='" + kasirHash + "', role='Kasir', status='Aktif' " +
+                "WHERE LOWER(TRIM(username))='kasir'");
     }
 
     private static void seedSupportIngredients(Statement st) throws SQLException {

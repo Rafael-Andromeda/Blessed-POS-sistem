@@ -8,9 +8,10 @@ import java.sql.*;
 
 public class UserDAO {
     public User authenticate(String username, String password) {
-        String sql = "SELECT * FROM users WHERE username=? AND status='Aktif'";
+        String sql = "SELECT * FROM users WHERE LOWER(TRIM(username)) = LOWER(TRIM(?)) " +
+                "AND LOWER(TRIM(COALESCE(status,'Aktif'))) = 'aktif' LIMIT 1";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, username);
+            ps.setString(1, username == null ? "" : username.trim());
             ResultSet rs = ps.executeQuery();
             if (rs.next() && PasswordUtil.verifyPassword(password, rs.getString("password"))) {
                 return map(rs);

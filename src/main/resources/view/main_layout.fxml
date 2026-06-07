@@ -19,9 +19,8 @@
             <Button fx:id="dashboardButton" text="Dashboard" maxWidth="Infinity" onAction="#openDashboard" styleClass="nav-button"/>
             <Button fx:id="menuButton" text="Menu Management" maxWidth="Infinity" onAction="#openMenu" styleClass="nav-button"/>
             <Button fx:id="cashierButton" text="Cashier" maxWidth="Infinity" onAction="#openCashier" styleClass="nav-button"/>
-            <Button fx:id="inventoryButton" text="Inventory" maxWidth="Infinity" onAction="#openInventory" styleClass="nav-button"/>
+            <Button fx:id="inventoryButton" text="Inventory &amp; Pembelian" maxWidth="Infinity" onAction="#openInventory" styleClass="nav-button"/>
             <Button fx:id="supplierButton" text="Supplier" maxWidth="Infinity" onAction="#openSupplier" styleClass="nav-button"/>
-            <Button fx:id="purchaseButton" text="Pembelian Bahan" maxWidth="Infinity" onAction="#openPurchase" styleClass="nav-button"/>
             <Button fx:id="historyButton" text="Transaction History" maxWidth="Infinity" onAction="#openHistory" styleClass="nav-button"/>
             <Button fx:id="reportButton" text="Reports" maxWidth="Infinity" onAction="#openReport" styleClass="nav-button"/>
             <Button fx:id="promoButton" text="Promo" maxWidth="Infinity" onAction="#openPromo" styleClass="nav-button"/>

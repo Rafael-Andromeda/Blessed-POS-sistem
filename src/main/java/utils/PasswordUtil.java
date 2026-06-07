@@ -7,7 +7,7 @@ public class PasswordUtil {
     public static String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] encodedHash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+            byte[] encodedHash = digest.digest((password == null ? "" : password).getBytes(StandardCharsets.UTF_8));
             StringBuilder hexString = new StringBuilder();
             for (byte b : encodedHash) {
                 String hex = Integer.toHexString(0xff & b);
@@ -20,7 +20,14 @@ public class PasswordUtil {
         }
     }
 
-    public static boolean verifyPassword(String rawPassword, String hashedPassword) {
-        return hashPassword(rawPassword).equals(hashedPassword);
+    public static boolean verifyPassword(String rawPassword, String storedPassword) {
+        if (storedPassword == null) return false;
+        String raw = rawPassword == null ? "" : rawPassword;
+        String saved = storedPassword.trim();
+
+        // Kompatibel dengan database lama yang masih menyimpan password polos.
+        if (raw.equals(saved)) return true;
+
+        return hashPassword(raw).equalsIgnoreCase(saved);
     }
 }
