@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PurchaseController" spacing="14" styleClass="page">
+    <Label text="Pembelian Bahan Baku" styleClass="page-title"/>
+    <GridPane hgap="10" vgap="10">
+        <Label text="Supplier" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="supplierCombo" prefWidth="260" promptText="Opsional" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <Label text="Bahan Baku" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="ingredientCombo" prefWidth="260" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <Label text="Jumlah" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="amountField" promptText="Contoh: 5" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <Label text="Harga Satuan" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="priceField" promptText="Contoh: 12000" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        <Label text="Catatan" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="noteField" promptText="Opsional" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+    </GridPane>
+    <HBox spacing="10">
+        <Button text="Simpan Pembelian" onAction="#save" styleClass="primary-button"/>
+        <Button text="Bersihkan" onAction="#clear" styleClass="secondary-button"/>
+    </HBox>
+    <TableView fx:id="table" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="dateColumn" text="Tanggal" prefWidth="160"/>
+            <TableColumn fx:id="supplierColumn" text="Supplier" prefWidth="180"/>
+            <TableColumn fx:id="ingredientColumn" text="Bahan" prefWidth="180"/>
+            <TableColumn fx:id="amountColumn" text="Jumlah" prefWidth="90"/>
+            <TableColumn fx:id="unitColumn" text="Satuan" prefWidth="80"/>
+            <TableColumn fx:id="totalColumn" text="Total" prefWidth="130"/>
+        </columns>
+    </TableView>
+</VBox>
