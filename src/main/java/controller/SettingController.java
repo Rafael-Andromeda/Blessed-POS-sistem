@@ -48,7 +48,7 @@ public class SettingController {
         if (dir == null) return;
         try {
             File backup = DatabaseBackupUtil.backupTo(dir);
-            new Alert(Alert.AlertType.INFORMATION, "Backup berhasil dibuat:\n" + backup.getAbsolutePath()).showAndWait();
+            new Alert(Alert.AlertType.INFORMATION, "Backup berhasil dibuat: " + backup.getAbsolutePath()).showAndWait();
         } catch (Exception e) { new Alert(Alert.AlertType.ERROR, "Backup gagal: " + e.getMessage()).showAndWait(); }
     }
 
