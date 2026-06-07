@@ -5,9 +5,12 @@
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.HistoryController" spacing="14" styleClass="page">
     <Label text="Transaction History" styleClass="page-title"/>
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <TextField fx:id="searchField" promptText="Cari ID, menu, tanggal, pembayaran..." prefWidth="330"/>
-        <ComboBox fx:id="monthCombo" prefWidth="130"/>
+        <TextField fx:id="searchField" promptText="Cari ID, menu, tanggal, pembayaran..." prefWidth="310"/>
+        <ComboBox fx:id="monthCombo" prefWidth="110"/>
+        <ComboBox fx:id="yearCombo" prefWidth="110"/>
+        <Button text="Reset Filter" onAction="#resetFilter" styleClass="secondary-button"/>
         <Button text="Detail" onAction="#showSelectedDetail" styleClass="secondary-button"/>
+        <Button fx:id="cancelButton" text="Batalkan" onAction="#cancelSelectedTransaction" styleClass="danger-button"/>
         <Button text="Export CSV" onAction="#exportCSV" styleClass="primary-button"/>
     </HBox>
     <TableView fx:id="table" VBox.vgrow="ALWAYS">
@@ -18,6 +21,7 @@
             <TableColumn fx:id="totalColumn" text="Total" prefWidth="130"/>
             <TableColumn fx:id="paymentColumn" text="Metode" prefWidth="100"/>
             <TableColumn fx:id="typeColumn" text="Tipe" prefWidth="110"/>
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="110"/>
         </columns>
     </TableView>
 </VBox>
