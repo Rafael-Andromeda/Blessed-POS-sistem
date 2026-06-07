@@ -12,6 +12,10 @@
         <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Rata-rata Transaksi" styleClass="muted-text"/><Label fx:id="averageLabel" styleClass="stat-value"/></VBox>
         <VBox HBox.hgrow="ALWAYS" styleClass="stat-card"><Label text="Order / Customer" styleClass="muted-text"/><Label fx:id="customerLabel" styleClass="stat-value"/></VBox>
     </HBox>
+    <VBox spacing="6" styleClass="panel">
+        <Label text="Peringatan Stok Bahan Baku" styleClass="section-title"/>
+        <Label fx:id="lowStockLabel" text="Semua aman" wrapText="true" styleClass="muted-text"/>
+    </VBox>
     <HBox spacing="16" VBox.vgrow="ALWAYS">
         <VBox spacing="8" HBox.hgrow="ALWAYS" styleClass="panel">
             <Label text="Grafik Penjualan Mingguan" styleClass="section-title"/>
