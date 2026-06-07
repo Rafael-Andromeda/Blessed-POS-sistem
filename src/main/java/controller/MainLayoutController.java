@@ -48,8 +48,8 @@ public class MainLayoutController {
             boolean isAdmin = "Admin".equalsIgnoreCase(user.getRole());
             menuButton.setDisable(!isAdmin);
             inventoryButton.setDisable(!isAdmin);
-            supplierButton.setDisable(!isAdmin);
-            purchaseButton.setDisable(!isAdmin);
+            if (supplierButton != null) supplierButton.setDisable(!isAdmin);
+            if (purchaseButton != null) purchaseButton.setDisable(!isAdmin);
             reportButton.setDisable(!isAdmin);
             promoButton.setDisable(!isAdmin);
             settingButton.setDisable(!isAdmin);

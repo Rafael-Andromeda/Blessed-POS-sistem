@@ -181,3 +181,11 @@
 }
 .transparent-scroll, .transparent-scroll > .viewport { -fx-background-color: transparent; }
 .chart-plot-background { -fx-background-color: transparent; }
+.qris-box {
+    -fx-background-color: #F0FAF9;
+    -fx-background-radius: 16;
+    -fx-border-color: #009688;
+    -fx-border-radius: 16;
+    -fx-border-width: 2;
+    -fx-padding: 16;
+}
