@@ -13,5 +13,11 @@
         <HBox spacing="8"><TextField fx:id="logoField" promptText="Path logo" HBox.hgrow="ALWAYS"/><Button text="Pilih Logo" onAction="#browseLogo" styleClass="secondary-button"/></HBox>
         <Button text="Simpan Setting" onAction="#save" styleClass="primary-button" maxWidth="Infinity"/>
         <Label text="Catatan: logo di sidebar akan refresh setelah login ulang." styleClass="muted-text"/>
+        <Separator/>
+        <Label text="Backup &amp; Restore Database" styleClass="section-title"/>
+        <HBox spacing="10">
+            <Button text="Backup Database" onAction="#backupDatabase" styleClass="secondary-button"/>
+            <Button text="Restore Database" onAction="#restoreDatabase" styleClass="danger-button"/>
+        </HBox>
     </VBox>
 </VBox>
