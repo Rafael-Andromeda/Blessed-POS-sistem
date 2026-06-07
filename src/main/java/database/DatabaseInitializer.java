@@ -86,6 +86,9 @@ public class DatabaseInitializer {
                 "diskon INTEGER DEFAULT 0," +
                 "total INTEGER NOT NULL," +
                 "tanggal TEXT DEFAULT CURRENT_TIMESTAMP," +
+                "status TEXT DEFAULT 'Selesai'," +
+                "cancel_reason TEXT," +
+                "cancelled_at TEXT," +
                 "FOREIGN KEY (id_user) REFERENCES users(id_user)," +
                 "FOREIGN KEY (id_promo) REFERENCES promos(id_promo))");
 
@@ -99,6 +102,27 @@ public class DatabaseInitializer {
                 "total INTEGER NOT NULL," +
                 "FOREIGN KEY (id_transaksi) REFERENCES transactions(id_transaksi)," +
                 "FOREIGN KEY (id_menu) REFERENCES menu_items(id_menu))");
+
+        st.execute("CREATE TABLE IF NOT EXISTS suppliers (" +
+                "id_supplier INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "nama_supplier TEXT NOT NULL," +
+                "kontak TEXT," +
+                "alamat TEXT," +
+                "status TEXT DEFAULT 'Aktif'," +
+                "created_at TEXT DEFAULT CURRENT_TIMESTAMP," +
+                "updated_at TEXT)");
+
+        st.execute("CREATE TABLE IF NOT EXISTS purchases (" +
+                "id_pembelian INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "id_supplier INTEGER," +
+                "id_bahan INTEGER NOT NULL," +
+                "jumlah REAL NOT NULL," +
+                "harga_satuan INTEGER DEFAULT 0," +
+                "total INTEGER DEFAULT 0," +
+                "tanggal TEXT DEFAULT CURRENT_TIMESTAMP," +
+                "catatan TEXT," +
+                "FOREIGN KEY (id_supplier) REFERENCES suppliers(id_supplier)," +
+                "FOREIGN KEY (id_bahan) REFERENCES ingredients(id_bahan))");
 
         st.execute("CREATE TABLE IF NOT EXISTS app_settings (" +
                 "id_setting INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -114,7 +138,17 @@ public class DatabaseInitializer {
         if (!columnExists(conn, "menu_items", "is_deleted")) {
             st.execute("ALTER TABLE menu_items ADD COLUMN is_deleted INTEGER DEFAULT 0");
         }
+        if (!columnExists(conn, "transactions", "status")) {
+            st.execute("ALTER TABLE transactions ADD COLUMN status TEXT DEFAULT 'Selesai'");
+        }
+        if (!columnExists(conn, "transactions", "cancel_reason")) {
+            st.execute("ALTER TABLE transactions ADD COLUMN cancel_reason TEXT");
+        }
+        if (!columnExists(conn, "transactions", "cancelled_at")) {
+            st.execute("ALTER TABLE transactions ADD COLUMN cancelled_at TEXT");
+        }
         st.execute("UPDATE menu_items SET is_deleted=0 WHERE is_deleted IS NULL");
+        st.execute("UPDATE transactions SET status='Selesai' WHERE status IS NULL OR status=''");
     }
 
     private static boolean columnExists(Connection conn, String table, String column) throws SQLException {

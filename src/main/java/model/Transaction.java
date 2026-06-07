@@ -15,10 +15,16 @@ public class Transaction {
     private int total;
     private String tanggal;
     private String items;
+    private String status;
+    private String cancelReason;
 
     public Transaction() {}
 
     public Transaction(int idTransaksi, String kodeTransaksi, int idUser, String kasir, Integer idPromo, String tipeOrder, String metodePembayaran, int subtotal, int diskon, int total, String tanggal, String items) {
+        this(idTransaksi, kodeTransaksi, idUser, kasir, idPromo, tipeOrder, metodePembayaran, subtotal, diskon, total, tanggal, items, "Selesai", null);
+    }
+
+    public Transaction(int idTransaksi, String kodeTransaksi, int idUser, String kasir, Integer idPromo, String tipeOrder, String metodePembayaran, int subtotal, int diskon, int total, String tanggal, String items, String status, String cancelReason) {
         this.idTransaksi = idTransaksi;
         this.kodeTransaksi = kodeTransaksi;
         this.idUser = idUser;
@@ -31,6 +37,8 @@ public class Transaction {
         this.total = total;
         this.tanggal = tanggal;
         this.items = items;
+        this.status = status;
+        this.cancelReason = cancelReason;
     }
 
     public int getIdTransaksi() { return idTransaksi; }
@@ -57,6 +65,10 @@ public class Transaction {
     public void setTanggal(String tanggal) { this.tanggal = tanggal; }
     public String getItems() { return items; }
     public void setItems(String items) { this.items = items; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public String getCancelReason() { return cancelReason; }
+    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
     public String getSubtotalFormatted() { return CurrencyUtil.formatRupiah(subtotal); }
     public String getDiskonFormatted() { return CurrencyUtil.formatRupiah(diskon); }
     public String getTotalFormatted() { return CurrencyUtil.formatRupiah(total); }

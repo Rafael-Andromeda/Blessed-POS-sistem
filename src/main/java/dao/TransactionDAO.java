@@ -177,6 +177,53 @@ public class TransactionDAO {
         }
     }
 
+    public boolean cancelTransaction(int idTransaksi, String reason) throws SQLException {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                Transaction trx = findById(idTransaksi);
+                if (trx == null) throw new SQLException("Transaksi tidak ditemukan.");
+                if ("Dibatalkan".equalsIgnoreCase(trx.getStatus())) throw new SQLException("Transaksi sudah dibatalkan.");
+                restoreStockAfterCancel(conn, idTransaksi);
+                try (PreparedStatement ps = conn.prepareStatement("UPDATE transactions SET status='Dibatalkan', cancel_reason=?, cancelled_at=datetime('now','localtime') WHERE id_transaksi=?")) {
+                    ps.setString(1, reason); ps.setInt(2, idTransaksi); ps.executeUpdate();
+                }
+                MenuDAO.refreshMenuStockFromIngredients(conn, null);
+                conn.commit(); return true;
+            } catch (SQLException e) { conn.rollback(); throw e; }
+            finally { conn.setAutoCommit(true); }
+        }
+    }
+
+    private void restoreStockAfterCancel(Connection conn, int idTransaksi) throws SQLException {
+        String detailSql = "SELECT id_menu, qty FROM transaction_details WHERE id_transaksi=?";
+        String recipeSql = "SELECT mbb.bahan_baku_id, mbb.jumlah_dibutuhkan, i.stok, i.batas_minimum FROM menu_bahan_baku mbb JOIN ingredients i ON i.id_bahan=mbb.bahan_baku_id WHERE mbb.menu_id=?";
+        String updateIngredient = "UPDATE ingredients SET stok=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id_bahan=?";
+        try (PreparedStatement dps = conn.prepareStatement(detailSql)) {
+            dps.setInt(1, idTransaksi);
+            ResultSet drs = dps.executeQuery();
+            while (drs.next()) {
+                boolean hasRecipe = false;
+                try (PreparedStatement rps = conn.prepareStatement(recipeSql)) {
+                    rps.setInt(1, drs.getInt("id_menu"));
+                    ResultSet rrs = rps.executeQuery();
+                    while (rrs.next()) {
+                        hasRecipe = true;
+                        double newStock = rrs.getDouble("stok") + (rrs.getDouble("jumlah_dibutuhkan") * drs.getInt("qty"));
+                        try (PreparedStatement ups = conn.prepareStatement(updateIngredient)) {
+                            ups.setDouble(1, newStock); ups.setString(2, IngredientDAO.statusFor(newStock, rrs.getDouble("batas_minimum"))); ups.setInt(3, rrs.getInt("bahan_baku_id")); ups.executeUpdate();
+                        }
+                    }
+                }
+                if (!hasRecipe) {
+                    try (PreparedStatement ups = conn.prepareStatement("UPDATE menu_items SET stok=stok+?, updated_at=CURRENT_TIMESTAMP WHERE id_menu=?")) {
+                        ups.setInt(1, drs.getInt("qty")); ups.setInt(2, drs.getInt("id_menu")); ups.executeUpdate();
+                    }
+                }
+            }
+        }
+    }
+
     private String generateCode(Connection conn) throws SQLException {
         String prefix = "TRX" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         try (PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM transactions WHERE kode_transaksi LIKE ?")) {
@@ -239,19 +286,19 @@ public class TransactionDAO {
         return list;
     }
 
-    public int getTodayRevenue() { return singleInt("SELECT COALESCE(SUM(total),0) FROM transactions WHERE DATE(tanggal)=DATE('now','localtime')"); }
-    public int getTodayCount() { return singleInt("SELECT COUNT(*) FROM transactions WHERE DATE(tanggal)=DATE('now','localtime')"); }
-    public int getTodayAverage() { return singleInt("SELECT COALESCE(AVG(total),0) FROM transactions WHERE DATE(tanggal)=DATE('now','localtime')"); }
-    public int getMonthlyRevenue() { return singleInt("SELECT COALESCE(SUM(total),0) FROM transactions WHERE strftime('%Y-%m',tanggal)=strftime('%Y-%m','now','localtime')"); }
-    public int getTotalTransactions() { return singleInt("SELECT COUNT(*) FROM transactions"); }
-    public int getAverageTransaction() { return singleInt("SELECT COALESCE(AVG(total),0) FROM transactions"); }
+    public int getTodayRevenue() { return singleInt("SELECT COALESCE(SUM(total),0) FROM transactions WHERE status='Selesai' AND DATE(tanggal)=DATE('now','localtime')"); }
+    public int getTodayCount() { return singleInt("SELECT COUNT(*) FROM transactions WHERE status='Selesai' AND DATE(tanggal)=DATE('now','localtime')"); }
+    public int getTodayAverage() { return singleInt("SELECT COALESCE(AVG(total),0) FROM transactions WHERE status='Selesai' AND DATE(tanggal)=DATE('now','localtime')"); }
+    public int getMonthlyRevenue() { return singleInt("SELECT COALESCE(SUM(total),0) FROM transactions WHERE status='Selesai' AND strftime('%Y-%m',tanggal)=strftime('%Y-%m','now','localtime')"); }
+    public int getTotalTransactions() { return singleInt("SELECT COUNT(*) FROM transactions WHERE status='Selesai'"); }
+    public int getAverageTransaction() { return singleInt("SELECT COALESCE(AVG(total),0) FROM transactions WHERE status='Selesai'"); }
 
     public int getRevenue(String month, String year) { return filteredInt("SUM(total)", month, year); }
     public int getTotalTransactions(String month, String year) { return filteredInt("COUNT(*)", month, year); }
     public int getAverageTransaction(String month, String year) { return filteredInt("AVG(total)", month, year); }
 
     private int filteredInt(String aggregate, String month, String year) {
-        StringBuilder sql = new StringBuilder("SELECT COALESCE(" + aggregate + ",0) FROM transactions WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT COALESCE(" + aggregate + ",0) FROM transactions WHERE status='Selesai'");
         appendDateFilter(sql, month, year, "tanggal");
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             bindDateFilter(ps, 1, month, year);
@@ -267,12 +314,12 @@ public class TransactionDAO {
     }
 
     public Map<String, Integer> salesDaily() { return salesDaily("Semua", "Semua"); }
-    public Map<String, Integer> salesWeekly() { return mapQuery("SELECT DATE(tanggal) AS label, SUM(total) AS value FROM transactions WHERE DATE(tanggal) >= DATE('now','localtime','-6 days') GROUP BY DATE(tanggal) ORDER BY label ASC"); }
+    public Map<String, Integer> salesWeekly() { return mapQuery("SELECT DATE(tanggal) AS label, SUM(total) AS value FROM transactions WHERE status='Selesai' AND DATE(tanggal) >= DATE('now','localtime','-6 days') GROUP BY DATE(tanggal) ORDER BY label ASC"); }
     public Map<String, Integer> bestSellingMenu() { return bestSellingMenu("Semua", "Semua"); }
     public Map<String, Integer> salesByCategory() { return salesByCategory("Semua", "Semua"); }
 
     public Map<String, Integer> salesDaily(String month, String year) {
-        StringBuilder sql = new StringBuilder("SELECT DATE(tanggal) AS label, SUM(total) AS value FROM transactions WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT DATE(tanggal) AS label, SUM(total) AS value FROM transactions WHERE status='Selesai'");
         appendDateFilter(sql, month, year, "tanggal");
         sql.append(" GROUP BY DATE(tanggal) ORDER BY label ASC");
         return mapQuery(sql.toString(), month, year);
@@ -280,7 +327,7 @@ public class TransactionDAO {
 
     public Map<String, Integer> bestSellingMenu(String month, String year) {
         StringBuilder sql = new StringBuilder("SELECT td.nama_menu AS label, SUM(td.qty) AS value " +
-                "FROM transaction_details td JOIN transactions t ON td.id_transaksi=t.id_transaksi WHERE 1=1");
+                "FROM transaction_details td JOIN transactions t ON td.id_transaksi=t.id_transaksi WHERE t.status='Selesai'");
         appendDateFilter(sql, month, year, "t.tanggal");
         sql.append(" GROUP BY td.nama_menu ORDER BY value DESC LIMIT 5");
         return mapQuery(sql.toString(), month, year);
@@ -289,7 +336,7 @@ public class TransactionDAO {
     public Map<String, Integer> salesByCategory(String month, String year) {
         StringBuilder sql = new StringBuilder("SELECT COALESCE(m.kategori,'Lainnya') AS label, SUM(td.total) AS value " +
                 "FROM transaction_details td JOIN transactions t ON td.id_transaksi=t.id_transaksi " +
-                "LEFT JOIN menu_items m ON td.id_menu=m.id_menu WHERE 1=1");
+                "LEFT JOIN menu_items m ON td.id_menu=m.id_menu WHERE t.status='Selesai'");
         appendDateFilter(sql, month, year, "t.tanggal");
         sql.append(" GROUP BY COALESCE(m.kategori,'Lainnya')");
         return mapQuery(sql.toString(), month, year);
@@ -338,6 +385,6 @@ public class TransactionDAO {
         int promo = rs.getInt("id_promo");
         Integer idPromo = rs.wasNull() ? null : promo;
         return new Transaction(rs.getInt("id_transaksi"), rs.getString("kode_transaksi"), rs.getInt("id_user"), rs.getString("kasir"), idPromo,
-                rs.getString("tipe_order"), rs.getString("metode_pembayaran"), rs.getInt("subtotal"), rs.getInt("diskon"), rs.getInt("total"), rs.getString("tanggal"), rs.getString("items"));
+                rs.getString("tipe_order"), rs.getString("metode_pembayaran"), rs.getInt("subtotal"), rs.getInt("diskon"), rs.getInt("total"), rs.getString("tanggal"), rs.getString("items"), rs.getString("status"), rs.getString("cancel_reason"));
     }
 }

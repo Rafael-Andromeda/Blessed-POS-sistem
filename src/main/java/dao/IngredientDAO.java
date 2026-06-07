@@ -46,11 +46,25 @@ public class IngredientDAO {
         } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
-    public boolean hasLowStock() {
+    public boolean hasLowStock() { return getLowStockCount() > 0; }
+
+    public int getLowStockCount() {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM ingredients WHERE stok <= batas_minimum")) {
             ResultSet rs = ps.executeQuery();
-            return rs.next() && rs.getInt(1) > 0;
-        } catch (SQLException e) { e.printStackTrace(); return false; }
+            return rs.next() ? rs.getInt(1) : 0;
+        } catch (SQLException e) { e.printStackTrace(); return 0; }
+    }
+
+    public String getLowStockSummary() {
+        StringBuilder sb = new StringBuilder();
+        String sql = "SELECT nama_bahan, stok, satuan, batas_minimum FROM ingredients WHERE stok <= batas_minimum ORDER BY stok ASC LIMIT 5";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                if (sb.length() > 0) sb.append(", ");
+                sb.append(rs.getString("nama_bahan")).append(" ").append(rs.getDouble("stok")).append(" ").append(rs.getString("satuan"));
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return sb.length() == 0 ? "Semua aman" : sb.toString();
     }
 
     private void fill(PreparedStatement ps, Ingredient i, boolean includeId) throws SQLException {
