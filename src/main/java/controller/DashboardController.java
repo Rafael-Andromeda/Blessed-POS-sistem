@@ -1,6 +1,7 @@
 package controller;
 
 import dao.TransactionDAO;
+import dao.IngredientDAO;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -21,6 +22,7 @@ public class DashboardController {
     @FXML private Label todayTransactionLabel;
     @FXML private Label averageLabel;
     @FXML private Label customerLabel;
+    @FXML private Label lowStockLabel;
     @FXML private LineChart<String, Number> weeklyChart;
     @FXML private PieChart bestMenuChart;
     @FXML private TableView<Transaction> recentTable;
@@ -31,6 +33,7 @@ public class DashboardController {
     @FXML private TableColumn<Transaction, String> totalColumn;
 
     private final TransactionDAO transactionDAO = new TransactionDAO();
+    private final IngredientDAO ingredientDAO = new IngredientDAO();
 
     @FXML
     public void initialize() {
@@ -38,6 +41,7 @@ public class DashboardController {
         todayTransactionLabel.setText(String.valueOf(transactionDAO.getTodayCount()));
         averageLabel.setText(CurrencyUtil.formatRupiah(transactionDAO.getTodayAverage()));
         customerLabel.setText(String.valueOf(transactionDAO.getTodayCount()));
+        lowStockLabel.setText(ingredientDAO.getLowStockCount() + " bahan perlu dicek: " + ingredientDAO.getLowStockSummary());
         setupTable();
         loadWeeklyChart();
         loadBestMenuChart();

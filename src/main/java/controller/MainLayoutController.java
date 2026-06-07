@@ -29,6 +29,8 @@ public class MainLayoutController {
     @FXML private Button menuButton;
     @FXML private Button cashierButton;
     @FXML private Button inventoryButton;
+    @FXML private Button supplierButton;
+    @FXML private Button purchaseButton;
     @FXML private Button historyButton;
     @FXML private Button reportButton;
     @FXML private Button promoButton;
@@ -46,6 +48,9 @@ public class MainLayoutController {
             boolean isAdmin = "Admin".equalsIgnoreCase(user.getRole());
             menuButton.setDisable(!isAdmin);
             inventoryButton.setDisable(!isAdmin);
+            supplierButton.setDisable(!isAdmin);
+            purchaseButton.setDisable(!isAdmin);
+            reportButton.setDisable(!isAdmin);
             promoButton.setDisable(!isAdmin);
             settingButton.setDisable(!isAdmin);
         }
@@ -78,6 +83,8 @@ public class MainLayoutController {
     @FXML private void openMenu() { loadPage("menu.fxml"); }
     @FXML private void openCashier() { loadPage("cashier.fxml"); }
     @FXML private void openInventory() { loadPage("inventory.fxml"); }
+    @FXML private void openSupplier() { loadPage("supplier.fxml"); }
+    @FXML private void openPurchase() { loadPage("purchase.fxml"); }
     @FXML private void openHistory() { loadPage("history.fxml"); }
     @FXML private void openReport() { loadPage("report.fxml"); }
     @FXML private void openPromo() { loadPage("promo.fxml"); }
