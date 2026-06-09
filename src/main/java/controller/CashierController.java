@@ -56,7 +56,7 @@ public class CashierController {
         categoryCombo.setValue("Semua");
         orderTypeCombo.setItems(FXCollections.observableArrayList("Dine In", "Take Away"));
         orderTypeCombo.setValue("Dine In");
-        paymentCombo.setItems(FXCollections.observableArrayList("Cash", "QRIS", "Debit", "E-Wallet"));
+        paymentCombo.setItems(FXCollections.observableArrayList("Cash", "QRIS", "E-Wallet"));
         paymentCombo.setValue("Cash");
         List<Promo> promos = new ArrayList<>();
         Promo none = new Promo();
@@ -100,12 +100,14 @@ public class CashierController {
     }
 
     private void updatePaymentMode() {
-        boolean qris = "QRIS".equals(paymentCombo.getValue());
-        qrisBox.setVisible(qris);
-        qrisBox.setManaged(qris);
-        confirmQrisButton.setVisible(qris);
-        confirmQrisButton.setManaged(qris);
-        processButton.setText(qris ? "Tampilkan QRIS" : "Proses Pembayaran & Cetak Nota");
+        // Saat ganti metode pembayaran, sembunyikan dulu qrisBox (akan muncul setelah klik proses)
+        qrisBox.setVisible(false);
+        qrisBox.setManaged(false);
+        confirmQrisButton.setVisible(false);
+        confirmQrisButton.setManaged(false);
+        processButton.setVisible(true);
+        processButton.setManaged(true);
+        processButton.setText("Proses Pembayaran & Cetak Nota");
     }
 
     private void loadMenus() {
@@ -200,11 +202,15 @@ public class CashierController {
     }
 
     @FXML private void processPayment() {
+        if (cartItems.isEmpty()) { showAlert("Keranjang masih kosong."); return; }
         if ("QRIS".equals(paymentCombo.getValue())) {
-            if (cartItems.isEmpty()) { showAlert("Keranjang masih kosong."); return; }
+            // Tampilkan QRIS setelah kasir tekan tombol proses
             qrisBox.setVisible(true);
             qrisBox.setManaged(true);
-            showInfo("Silakan pembeli scan barcode QRIS, lalu tekan tombol Konfirmasi Pembayaran. Nota belum dicetak sebelum konfirmasi.");
+            confirmQrisButton.setVisible(true);
+            confirmQrisButton.setManaged(true);
+            processButton.setVisible(false);
+            processButton.setManaged(false);
             return;
         }
         completePayment();
@@ -236,6 +242,7 @@ public class CashierController {
             showInfo("Transaksi berhasil. Nota tersimpan di: " + receipt.toAbsolutePath());
             cartItems.clear();
             updateTotals();
+            updatePaymentMode(); // reset tampilan tombol & qrisBox
             loadMenus();
         } catch (SQLException ex) {
             ex.printStackTrace();

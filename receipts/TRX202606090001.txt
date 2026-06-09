@@ -1,0 +1,17 @@
+NASIGORENG 71
+Warung Makan
+
+No Transaksi : TRX202606090001
+Tanggal      : 2026-06-09 21:06:46
+Kasir        : Kasir
+Tipe         : Dine In
+Pembayaran   : QRIS
+--------------------------------
+Ayam Geprek      x1    Rp 20.000
+Kentang Goreng   x1    Rp 12.000
+--------------------------------
+Subtotal                Rp 32.000
+Promo                    Rp 3.200
+Total                   Rp 28.800
+
+Terima kasih

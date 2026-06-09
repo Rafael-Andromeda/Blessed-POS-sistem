@@ -145,6 +145,16 @@
     -fx-font-weight: bold;
 }
 .cart-panel { -fx-padding: 18; }
+.cart-panel-bottom {
+    -fx-padding: 10 0 0 0;
+}
+.cart-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.cart-scroll > .viewport {
+    -fx-background-color: transparent;
+}
 .text-field, .password-field, .combo-box, .date-picker {
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 12;

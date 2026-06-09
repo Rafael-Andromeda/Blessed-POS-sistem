@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CashierController" styleClass="page">
+    <top>
+        <VBox spacing="12">
+            <Label text="Cashier / Transaksi" styleClass="page-title"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="Cari menu..." prefWidth="260"/>
+                <ComboBox fx:id="categoryCombo" prefWidth="160"/>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="transparent-scroll">
+            <GridPane fx:id="menuGrid" hgap="14" vgap="14">
+                <padding><Insets top="16" right="16" bottom="16" left="0"/></padding>
+            </GridPane>
+        </ScrollPane>
+    </center>
+    <right>
+        <VBox spacing="12" prefWidth="370" styleClass="cart-panel">
+            <Label text="Keranjang" styleClass="section-title"/>
+            <TableView fx:id="cartTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="itemColumn" text="Item" prefWidth="120"/>
+                    <TableColumn fx:id="qtyColumn" text="Qty" prefWidth="45"/>
+                    <TableColumn fx:id="priceColumn" text="Harga" prefWidth="85"/>
+                    <TableColumn fx:id="totalColumn" text="Total" prefWidth="95"/>
+                </columns>
+            </TableView>
+            <HBox spacing="8">
+                <Button text="Hapus Item" onAction="#removeSelectedItem" styleClass="danger-button"/>
+                <Button text="Kosongkan" onAction="#clearCart" styleClass="secondary-button"/>
+            </HBox>
+            <ComboBox fx:id="orderTypeCombo" maxWidth="Infinity"/>
+            <ComboBox fx:id="promoCombo" maxWidth="Infinity"/>
+            <ComboBox fx:id="paymentCombo" maxWidth="Infinity"/>
+            <VBox fx:id="qrisBox" spacing="8" alignment="CENTER" visible="false" managed="false" styleClass="qris-box">
+                <Label text="Scan QRIS untuk pembayaran" styleClass="section-title"/>
+                <ImageView fx:id="qrisImage" fitWidth="230" fitHeight="300" preserveRatio="true" smooth="true"/>
+                <Label text="Nota baru dicetak setelah kasir menekan Konfirmasi Pembayaran." wrapText="true" styleClass="muted-text"/>
+            </VBox>
+            <GridPane hgap="10" vgap="8">
+                <Label text="Subtotal" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <Label fx:id="subtotalLabel" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="amount-text"/>
+                <Label text="Promo" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <Label fx:id="discountLabel" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="amount-text"/>
+                <Label text="Total" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="section-title"/>
+                <Label fx:id="grandTotalLabel" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="grand-total"/>
+            </GridPane>
+            <Button fx:id="processButton" text="Proses Pembayaran &amp; Cetak Nota" maxWidth="Infinity" onAction="#processPayment" styleClass="primary-button"/>
+            <Button fx:id="confirmQrisButton" text="Konfirmasi Pembayaran" maxWidth="Infinity" onAction="#confirmQrisPayment" styleClass="primary-button" visible="false" managed="false"/>
+        </VBox>
+    </right>
+</BorderPane>
