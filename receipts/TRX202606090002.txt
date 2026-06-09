@@ -1,0 +1,17 @@
+NASIGORENG 71
+Warung Makan
+
+No Transaksi : TRX202606090002
+Tanggal      : 2026-06-09 21:21:24
+Kasir        : Kasir
+Tipe         : Dine In
+Pembayaran   : E-Wallet
+--------------------------------
+Ayam Geprek      x1    Rp 20.000
+Es Jeruk         x1     Rp 7.000
+--------------------------------
+Subtotal                Rp 27.000
+Promo                        Rp 0
+Total                   Rp 27.000
+
+Terima kasih

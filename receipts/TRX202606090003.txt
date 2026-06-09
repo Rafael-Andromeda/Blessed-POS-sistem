@@ -1,0 +1,20 @@
+NASIGORENG 71
+Warung Makan
+
+No Transaksi : TRX202606090003
+Tanggal      : 2026-06-09 21:50:37
+Kasir        : Admin
+Tipe         : Take Away
+Pembayaran   : QRIS
+--------------------------------
+Kopi Hitam       x1     Rp 8.000
+Es Teh           x1     Rp 5.000
+Es Jeruk         x1     Rp 7.000
+Mie Goreng       x1    Rp 16.000
+Nasi Goreng      x1    Rp 18.000
+--------------------------------
+Subtotal                Rp 54.000
+Promo                    Rp 5.000
+Total                   Rp 49.000
+
+Terima kasih
