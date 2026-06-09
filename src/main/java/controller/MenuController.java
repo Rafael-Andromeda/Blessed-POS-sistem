@@ -8,6 +8,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -16,6 +18,7 @@ import model.MenuIngredient;
 import model.MenuItem;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 public class MenuController {
@@ -62,6 +65,31 @@ public class MenuController {
         ingredientCombo.setItems(FXCollections.observableArrayList(ingredientDAO.findAll()));
     }
 
+    /**
+     * Memuat gambar dari path yang tersimpan di database.
+     * Mendukung:
+     *  - Path absolut (misal C:/Users/.../gambar.jpg atau /home/user/gambar.png)
+     *  - Path relatif terhadap direktori kerja aplikasi
+     * Fallback ke ikon default jika gambar tidak ditemukan.
+     */
+    private Image loadMenuImage(String gambarPath) {
+        if (gambarPath != null && !gambarPath.isBlank()) {
+            // Coba sebagai path absolut / relatif di filesystem
+            File file = new File(gambarPath);
+            if (file.exists() && file.isFile()) {
+                try {
+                    return new Image(file.toURI().toString(), 120, 90, true, true);
+                } catch (Exception ignored) {}
+            }
+        }
+        // Fallback: gambar default dari resources
+        try {
+            InputStream is = getClass().getResourceAsStream("/images/default-logo.png");
+            if (is != null) return new Image(is, 120, 90, true, true);
+        } catch (Exception ignored) {}
+        return null;
+    }
+
     private void loadMenus() {
         menuGrid.getChildren().clear();
         List<MenuItem> items = menuDAO.findAll(searchField.getText(), filterCombo.getValue(), false);
@@ -69,6 +97,18 @@ public class MenuController {
         for (MenuItem item: items) {
             VBox card = new VBox(7);
             card.getStyleClass().add("menu-card");
+
+            // Gambar menu
+            Image img = loadMenuImage(item.getGambar());
+            if (img != null) {
+                ImageView iv = new ImageView(img);
+                iv.setFitWidth(120);
+                iv.setFitHeight(90);
+                iv.setPreserveRatio(true);
+                iv.setSmooth(true);
+                card.getChildren().add(iv);
+            }
+
             Label name = new Label(item.getNamaMenu()); name.getStyleClass().add("card-title");
             Label cat = new Label(item.getKategori() + " • " + item.getStatus() + " • Stok " + item.getStok()); cat.getStyleClass().add(item.getStok() <= 0 ? "error-text" : "muted-text");
             Label price = new Label(item.getHargaFormatted()); price.getStyleClass().add("price-text");
