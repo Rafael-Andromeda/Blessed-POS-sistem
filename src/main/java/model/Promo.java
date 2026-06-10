@@ -2,7 +2,11 @@ package model;
 
 import utils.CurrencyUtil;
 
-public class Promo {
+/**
+ * Model untuk entitas promosi.
+ * Extends BaseModel untuk mewarisi field audit createdAt dan updatedAt (inheritance).
+ */
+public class Promo extends BaseModel {
     private int idPromo;
     private String namaPromo;
     private String jenisPromo;
@@ -11,11 +15,11 @@ public class Promo {
     private String tanggalMulai;
     private String tanggalSelesai;
     private String status;
-    private String createdAt;
-    private String updatedAt;
 
     public Promo() {}
+
     public Promo(int idPromo, String namaPromo, String jenisPromo, int nilaiPromo, int minimalPembelian, String tanggalMulai, String tanggalSelesai, String status, String createdAt, String updatedAt) {
+        super(createdAt, updatedAt);
         this.idPromo = idPromo;
         this.namaPromo = namaPromo;
         this.jenisPromo = jenisPromo;
@@ -24,8 +28,6 @@ public class Promo {
         this.tanggalMulai = tanggalMulai;
         this.tanggalSelesai = tanggalSelesai;
         this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public int getIdPromo() { return idPromo; }
@@ -44,10 +46,6 @@ public class Promo {
     public void setTanggalSelesai(String tanggalSelesai) { this.tanggalSelesai = tanggalSelesai; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-    public String getCreatedAt() { return createdAt; }
-    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
-    public String getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
 
     public String getLabel() {
         if (idPromo == 0) return "Tanpa Promo";
@@ -55,5 +53,6 @@ public class Promo {
         return namaPromo + " (" + nilai + ")";
     }
 
-    @Override public String toString() { return getLabel(); }
+    @Override
+    public String toString() { return getLabel(); }
 }

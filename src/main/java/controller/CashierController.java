@@ -20,6 +20,8 @@ import utils.CurrencyUtil;
 import utils.ReceiptPrinter;
 import utils.SessionManager;
 
+import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -110,6 +112,28 @@ public class CashierController {
         processButton.setText("Proses Pembayaran & Cetak Nota");
     }
 
+    /**
+     * Memuat gambar menu dari path yang tersimpan di database.
+     * Mendukung path absolut maupun relatif, lalu fallback ke gambar default.
+     */
+    private Image loadMenuImage(String gambarPath) {
+        if (gambarPath != null && !gambarPath.isBlank()) {
+            File file = new File(gambarPath);
+            if (file.exists() && file.isFile()) {
+                try {
+                    return new Image(file.toURI().toString(), 130, 95, true, true);
+                } catch (Exception ignored) {}
+            }
+        }
+
+        try {
+            InputStream is = getClass().getResourceAsStream("/images/default-logo.png");
+            if (is != null) return new Image(is, 130, 95, true, true);
+        } catch (Exception ignored) {}
+
+        return null;
+    }
+
     private void loadMenus() {
         menuGrid.getChildren().clear();
         List<MenuItem> items = menuDAO.findAll(searchField.getText(), categoryCombo.getValue(), true);
@@ -117,6 +141,17 @@ public class CashierController {
         for (MenuItem item : items) {
             VBox card = new VBox(8);
             card.getStyleClass().add("menu-card");
+
+            Image img = loadMenuImage(item.getGambar());
+            if (img != null) {
+                ImageView imageView = new ImageView(img);
+                imageView.setFitWidth(130);
+                imageView.setFitHeight(95);
+                imageView.setPreserveRatio(true);
+                imageView.setSmooth(true);
+                card.getChildren().add(imageView);
+            }
+
             Label name = new Label(item.getNamaMenu());
             name.getStyleClass().add("card-title");
             Label category = new Label(item.getKategori() + " • Stok " + item.getStok());

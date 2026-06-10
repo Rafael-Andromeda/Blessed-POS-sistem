@@ -2,7 +2,11 @@ package model;
 
 import utils.CurrencyUtil;
 
-public class MenuItem {
+/**
+ * Model untuk entitas menu makanan/minuman.
+ * Extends BaseModel untuk mewarisi field audit createdAt dan updatedAt (inheritance).
+ */
+public class MenuItem extends BaseModel {
     private int idMenu;
     private String namaMenu;
     private String kategori;
@@ -11,8 +15,6 @@ public class MenuItem {
     private String gambar;
     private String status;
     private int isDeleted;
-    private String createdAt;
-    private String updatedAt;
 
     public MenuItem() {}
 
@@ -21,6 +23,7 @@ public class MenuItem {
     }
 
     public MenuItem(int idMenu, String namaMenu, String kategori, int harga, int stok, String gambar, String status, int isDeleted, String createdAt, String updatedAt) {
+        super(createdAt, updatedAt);
         this.idMenu = idMenu;
         this.namaMenu = namaMenu;
         this.kategori = kategori;
@@ -29,8 +32,6 @@ public class MenuItem {
         this.gambar = gambar;
         this.status = status;
         this.isDeleted = isDeleted;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public int getIdMenu() { return idMenu; }
@@ -49,9 +50,10 @@ public class MenuItem {
     public void setStatus(String status) { this.status = status; }
     public int getIsDeleted() { return isDeleted; }
     public void setIsDeleted(int isDeleted) { this.isDeleted = isDeleted; }
-    public String getCreatedAt() { return createdAt; }
-    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
-    public String getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
     public String getHargaFormatted() { return CurrencyUtil.formatRupiah(harga); }
+
+    @Override
+    public String toString() {
+        return namaMenu + " (" + kategori + ") - " + CurrencyUtil.formatRupiah(harga);
+    }
 }

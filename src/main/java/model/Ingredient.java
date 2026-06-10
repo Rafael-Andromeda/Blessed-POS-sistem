@@ -1,25 +1,27 @@
 package model;
 
-public class Ingredient {
+/**
+ * Model untuk entitas bahan baku (Ingredient).
+ * Extends BaseModel untuk mewarisi field audit createdAt dan updatedAt (inheritance).
+ */
+public class Ingredient extends BaseModel {
     private int idBahan;
     private String namaBahan;
     private double stok;
     private String satuan;
     private double batasMinimum;
     private String status;
-    private String createdAt;
-    private String updatedAt;
 
     public Ingredient() {}
+
     public Ingredient(int idBahan, String namaBahan, double stok, String satuan, double batasMinimum, String status, String createdAt, String updatedAt) {
+        super(createdAt, updatedAt);
         this.idBahan = idBahan;
         this.namaBahan = namaBahan;
         this.stok = stok;
         this.satuan = satuan;
         this.batasMinimum = batasMinimum;
         this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public int getIdBahan() { return idBahan; }
@@ -34,10 +36,6 @@ public class Ingredient {
     public void setBatasMinimum(double batasMinimum) { this.batasMinimum = batasMinimum; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-    public String getCreatedAt() { return createdAt; }
-    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
-    public String getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
 
     @Override
     public String toString() {

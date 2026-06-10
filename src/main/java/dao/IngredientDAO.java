@@ -7,7 +7,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IngredientDAO {
+/**
+ * DAO class untuk entitas Ingredient (Bahan Baku).
+ * Mengimplementasikan BaseDAO sebagai penerapan abstraction & polymorphism.
+ */
+public class IngredientDAO implements BaseDAO<Ingredient, Integer> {
+
+    @Override
     public List<Ingredient> findAll() {
         List<Ingredient> list = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement("SELECT * FROM ingredients ORDER BY nama_bahan")) {
@@ -17,6 +23,7 @@ public class IngredientDAO {
         return list;
     }
 
+    @Override
     public boolean insert(Ingredient i) {
         String sql = "INSERT INTO ingredients(nama_bahan,stok,satuan,batas_minimum,status,updated_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP)";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -27,6 +34,7 @@ public class IngredientDAO {
         } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
+    @Override
     public boolean update(Ingredient i) {
         String sql = "UPDATE ingredients SET nama_bahan=?, stok=?, satuan=?, batas_minimum=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id_bahan=?";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -37,7 +45,8 @@ public class IngredientDAO {
         } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
-    public boolean delete(int id) {
+    @Override
+    public boolean delete(Integer id) {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement("DELETE FROM ingredients WHERE id_bahan=?")) {
             ps.setInt(1, id);
             boolean ok = ps.executeUpdate() > 0;

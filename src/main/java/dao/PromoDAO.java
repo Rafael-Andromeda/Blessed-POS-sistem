@@ -7,7 +7,22 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PromoDAO {
+/**
+ * DAO class untuk entitas Promo.
+ * Mengimplementasikan BaseDAO sebagai penerapan abstraction & polymorphism.
+ */
+public class PromoDAO implements BaseDAO<Promo, Integer> {
+
+    /** Mengambil semua promo (aktif dan tidak aktif). */
+    @Override
+    public List<Promo> findAll() {
+        return findAll(false);
+    }
+
+    /**
+     * Mengambil daftar promo berdasarkan status aktif.
+     * @param activeOnly true = hanya promo aktif
+     */
     public List<Promo> findAll(boolean activeOnly) {
         List<Promo> list = new ArrayList<>();
         String sql = activeOnly ? "SELECT * FROM promos WHERE status='Aktif' ORDER BY nama_promo" : "SELECT * FROM promos ORDER BY nama_promo";
@@ -18,6 +33,7 @@ public class PromoDAO {
         return list;
     }
 
+    @Override
     public boolean insert(Promo p) {
         String sql = "INSERT INTO promos(nama_promo,jenis_promo,nilai_promo,minimal_pembelian,tanggal_mulai,tanggal_selesai,status,updated_at) VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP)";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -26,6 +42,7 @@ public class PromoDAO {
         } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
+    @Override
     public boolean update(Promo p) {
         String sql = "UPDATE promos SET nama_promo=?, jenis_promo=?, nilai_promo=?, minimal_pembelian=?, tanggal_mulai=?, tanggal_selesai=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id_promo=?";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -34,7 +51,8 @@ public class PromoDAO {
         } catch (SQLException e) { e.printStackTrace(); return false; }
     }
 
-    public boolean delete(int id) {
+    @Override
+    public boolean delete(Integer id) {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement("DELETE FROM promos WHERE id_promo=?")) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
